@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>書類の受け取り方法を選択</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column; /* デバッグボタンを上部、コンテナをその下に配置 */
+            align-items: center; /* 中央寄せ */
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* ★★★ デバッグ用ボタンのスタイル ★★★ */
+        .debug-controls {
+            background-color: #ffe0b2;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ffcc80;
+            width: 100%; /* 横幅いっぱい */
+            margin-bottom: 20px; /* コンテナとの間隔 */
+            box-sizing: border-box;
+        }
+        .debug-controls button {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .debug-controls button:hover {
+            background-color: #f57c00;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 680px;
+            /* margin-top はデバッグコントロールの下なので不要かも */
+        }
+        h1 {
+            font-size: 24px;
+            color: #1c1e21;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .description-area {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .description-area a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .description-area a:hover {
+            text-decoration: underline;
+        }
+        .external-link-icon {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 4px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23007bff'%3E%3Cpath fill-rule='evenodd' d='M10.604 1h2.992L9 5.596V2.5a.5.5 0 0 1 1-1zm-1.5 1H5.5A1.5 1.5 0 0 0 4 3.5v9A1.5 1.5 0 0 0 5.5 14h5a1.5 1.5 0 0 0 1.5-1.5V7.604L13.604 9 15 7.604 10.604 3.5v-1zM5.5 3a.5.5 0 0 1 .5-.5h2.54L5 5.96V3.5a.5.5 0 0 1 .5-.5zm5 .5v1.04L12.04 3H10.5zM5 7.04L8.46 3.5H10.5A.5.5 0 0 1 11 4v8.5a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5V7.04z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: contain;
+            vertical-align: middle;
+        }
+
+        .options-container {
+            margin-bottom: 30px;
+        }
+        .option-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .option-card:hover {
+            border-color: #007bff;
+        }
+        .option-card.selected {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        .option-card input[type="radio"] {
+            margin-right: 15px;
+            margin-top: 3px;
+            transform: scale(1.2);
+        }
+        .option-content h3 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+        .option-content p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .action-button-area {
+            text-align: center;
+        }
+        .action-button {
+            padding: 12px 40px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: #0056b3;
+        }
+        .action-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- ★★★ デバッグ用コントロール ★★★ -->
+    <div class="debug-controls">
+        <button id="reset-storage-btn-delivery">テストデータリセット (書類受取方法の選択状態クリア)</button>
+    </div>
+
+    <div class="container">
+        <h1>書類の受け取り方法を選択してください</h1>
+
+        <div class="description-area">
+            <p>株式会社スマート＆ヘルプから就労条件に関する内容を含む書類が届いています。</p>
+            <p>電子通知で受け取るか、書面通知で受け取るかを選択し、「決定」を押してください。</p>
+            <p>書類の確認から合意までの流れについては、<a href="#" target="_blank">就労条件に関する内容を含む書類を受け取ったら<span class="external-link-icon"></span></a>を参照してください。</p>
+        </div>
+
+        <form id="delivery-method-form">
+            <div class="options-container">
+                <div class="option-card" id="option-electronic">
+                    <input type="radio" id="electronic-delivery" name="delivery_method" value="electronic" checked>
+                    <label for="electronic-delivery" class="option-content">
+                        <h3>電子通知で受け取る</h3>
+                        <p>SmartHRの文書配付機能を使用して、書類をPDFファイルで受け取ります。書類は受信ボックスから、いつでも閲覧、ダウンロード、印刷が可能です。退職後や書類紛失時も受信ボックスから確認できるので、便利です。</p>
+                    </label>
+                </div>
+
+                <div class="option-card" id="option-paper">
+                    <input type="radio" id="paper-delivery" name="delivery_method" value="paper">
+                    <label for="paper-delivery" class="option-content">
+                        <h3>書面通知で受け取る</h3>
+                        <p>後日、管理者から書面で就労条件に関する内容を含む書類を受け取ります。書類の受け取りに、SmartHRの文書配付機能は使用しません。</p>
+                    </label>
+                </div>
+            </div>
+
+            <div class="action-button-area">
+                <button type="submit" class="action-button" id="submit-button">決定</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('delivery-method-form');
+            const electronicOptionCard = document.getElementById('option-electronic');
+            const paperOptionCard = document.getElementById('option-paper');
+            const electronicRadio = document.getElementById('electronic-delivery');
+            const paperRadio = document.getElementById('paper-delivery');
+            const resetStorageBtn = document.getElementById('reset-storage-btn-delivery'); // ★★★ リセットボタン取得 ★★★
+
+            const DELIVERY_PREFERENCE_KEY = 'deliveryPreference'; // このキー名を契約確認ページと合わせる
+
+            function updateSelectedCard() {
+                if (electronicRadio.checked) {
+                    electronicOptionCard.classList.add('selected');
+                    paperOptionCard.classList.remove('selected');
+                } else if (paperRadio.checked) {
+                    paperOptionCard.classList.add('selected');
+                    electronicOptionCard.classList.remove('selected');
+                }
+            }
+
+            updateSelectedCard();
+
+            electronicOptionCard.addEventListener('click', function() {
+                electronicRadio.checked = true;
+                updateSelectedCard();
+            });
+
+            paperOptionCard.addEventListener('click', function() {
+                paperRadio.checked = true;
+                updateSelectedCard();
+            });
+
+            electronicRadio.addEventListener('change', updateSelectedCard);
+            paperRadio.addEventListener('change', updateSelectedCard);
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const selectedMethodRadio = document.querySelector('input[name="delivery_method"]:checked');
+                
+                if (selectedMethodRadio) {
+                    // ★★★ localStorageに選択値を保存 ★★★
+                    localStorage.setItem(DELIVERY_PREFERENCE_KEY, selectedMethodRadio.value);
+                    console.log('受け取り方法をlocalStorageに保存:', selectedMethodRadio.value);
+                    
+                    alert('選択された受け取り方法: ' + (selectedMethodRadio.value === 'electronic' ? '電子通知' : '書面通知') + '\n契約確認ページへ遷移します。');
+                    window.location.href = 'employment_terms_contract.html'; // 契約確認ページの実際のファイル名
+                } else {
+                    alert('受け取り方法を選択してください。'); // 通常はどちらか選択されているはず
+                }
+            });
+
+            // ★★★ デバッグ用リセットボタンのイベントリスナー ★★★
+            if (resetStorageBtn) {
+                resetStorageBtn.addEventListener('click', function() {
+                    localStorage.removeItem(DELIVERY_PREFERENCE_KEY);
+                    // このページで他にlocalStorageに保存するキーがあれば、それも削除
+                    alert('書類受け取り方法の選択状態をリセットしました。');
+                    // 必要に応じてページリロード
+                    // window.location.reload(); 
+                    // リロードすると選択状態も初期化されるので、UI上の表示もリセットされる
+                    electronicRadio.checked = true; // デフォルトに戻す
+                    updateSelectedCard(); // UI更新
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サプラー 雇用契約書 兼 労働条件確認書</title>
+<style>
+    body {
+      font-family: 'Noto Sans JP', sans-serif; /* Noto Sans JP を指定 */
+      font-size: 10pt;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      color: #000;
+      -webkit-font-smoothing: antialiased; /* Chrome, Safariでのアンチエイリアス */
+      -moz-osx-font-smoothing: grayscale; /* Firefoxでのアンチエイリアス */
+    }
+      .container {
+    width: 850px; /* A4サイズ想定の幅に近い値、少し広めに */
+    margin: 15px auto;
+    padding: 15px;
+  }
+  .header-info {
+    font-size: 9pt;
+    margin-bottom: 5px;
+    overflow: hidden;
+  }
+  .header-info .left {
+    float: left;
+  }
+  .header-info .right {
+    float: right;
+    text-align: right;
+  }
+  .main-title-wrapper {
+    text-align: center;
+    margin-bottom: 10px;
+    position: relative; /* 本社提出用とサークルマークの位置調整のため */
+  }
+  .main-title-wrapper h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+  }
+  .submission-mark-new {
+    position: absolute;
+    top: 0;
+    right: 50px; /* 位置調整 */
+    border: 1px solid black;
+    padding: 2px 8px;
+    font-size: 9pt;
+  }
+  .circle-stamp-new {
+    position: absolute;
+    top: -2px;
+    right: 0; /* 位置調整 */
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18pt;
+    font-weight: bold;
+    background-color: white; /* タイトルと重ならないように */
+  }
+  .contract-intro {
+    font-size: 9.5pt;
+    margin-bottom: 10px;
+  }
+  table.conditions-table-new {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+    font-size: 9.5pt; /* テーブル内のフォントサイズを少し調整 */
+  }
+  .conditions-table-new th, .conditions-table-new td {
+    border: 1px solid black;
+    padding: 3px 5px; /* パディングを少し調整 */
+    vertical-align: middle; /* 中央揃えを基本に */
+  }
+  .conditions-table-new th {
+    background-color: #e6f2ff; /* ヘッダーセルの背景色を水色系に */
+    text-align: center;
+    font-weight: normal;
+    width: 100px; /* 見出しセルの幅を固定気味に */
+  }
+  .conditions-table-new td {
+    min-height: 1.5em; /* 空の場合の最低限の高さ */
+  }
+  .placeholder-new {
+    background-color: #f0f0f0; /* プレースホルダーの背景色をグレー系に */
+    padding: 1px 4px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    min-width: 50px;
+    text-align: left; /* プレースホルダー内は左寄せに */
+    font-weight: normal;
+  }
+  .small-text-new {
+    font-size: 8pt;
+    color: #333;
+    display: block; /* 必要に応じて改行 */
+    margin-top: 2px;
+  }
+  .checkbox-label-new {
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .input-text-inline {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    background-color: #f0f0f0;
+    padding: 1px 2px;
+    width: 80px;
+  }
+  .input-text-s { width: 40px; }
+  .input-text-m { width: 100px; }
+  .input-text-l { width: 200px; }
+  .input-text-xl { width: 95%; }
+
+  .footer-text-new {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 9.5pt;
+  }
+  .signature-section-new {
+    overflow: hidden; /* float解除用 */
+    margin-top: 5px;
+    font-size: 9.5pt;
+  }
+  .signature-section-new .date-entry {
+    text-align: right;
+    margin-bottom: 10px;
+    padding-right: 50px;
+  }
+  .signature-section-new .company-signature {
+    float: left;
+    width: 48%;
+  }
+  .signature-section-new .employee-signature {
+    float: right;
+    width: 48%;
+  }
+  .signature-section-new p {
+    margin: 2px 0;
+  }
+  .company-name-large {
+    font-size: 11pt;
+    margin-left: 1em;
+  }
+  .representative-name {
+    margin-left: 2em;
+    position: relative;
+  }
+  .seal-placeholder-new { /* 丸印のプレースホルダー */
+    position: absolute;
+    right: -25px; /* 印の位置調整 */
+    top: -5px;
+    width: 50px; /* 印鑑の大きさ */
+    height: 50px;
+    border: 1px dashed #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    text-align: center;
+    line-height: 50px;
+    font-size: 8pt;
+    color: #aaa;
+  }
+  .employee-seal-mark {
+      float: right;
+      margin-left: 10px;
+  }
+
+  .approval-section {
+    margin-top: 15px;
+    border: 1px solid black;
+    overflow: hidden; /* float解除用 */
+  }
+  .approval-box {
+    float: left;
+    width: 33.33%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 9pt;
+  }
+  .approval-box:not(:last-child) {
+    border-right: 1px solid black;
+  }
+  .approval-box .title {
+    margin-bottom: 25px; /* 押印スペース */
+  }
+
+  .bottom-summary {
+    margin-top: 10px;
+    font-size: 9pt;
+    text-align: center; /* 画像では中央寄り */
+  }
+  .qr-code-placeholder {
+    float: right;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ccc;
+    text-align: center;
+    line-height: 50px;
+    font-size: 8pt;
+    color: #aaa;
+    margin-left: 10px;
+  }
+  .clear { clear: both; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header-info">
+    <div class="left">首 BI2 - 首都圏BI第二事業本部</div>
+    <div class="right">
+      社員番号：<span class="placeholder-new" style="min-width:60px;">{社員番号}</span>
+      従業員名 <span class="placeholder-new" style="min-width:100px;">{氏名}</span> 殿
+      <span style="margin-left:5px;">所属 <span class="placeholder-new" style="min-width:120px;">{所属部署名} (榎本 淳)</span></span>
+    </div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="main-title-wrapper">
+    <h1>サプラー 雇用契約書 兼 労働条件確認書</h1>
+    <span class="submission-mark-new">本社提出用</span>
+    <div class="circle-stamp-new">サ</div>
+  </div>
+
+  <p class="contract-intro">
+    株式会社LEOC と 従業員名 <span class="placeholder-new" style="min-width:100px;">{氏名}</span> は、下記の通り雇用契約を締結する。
+  </p>
+
+  <table class="conditions-table-new">
+    <tr>
+      <th>雇用区分</th>
+      <td colspan="3"><span class="placeholder-new" style="width:100px;">サプラー</span></td>
+    </tr>
+    <tr>
+      <th>雇用期間</th>
+      <td colspan="3">
+        <span class="placeholder-new">{雇用期間_開始日}</span> から <span class="placeholder-new">{雇用期間_終了日}</span> まで
+      </td>
+    </tr>
+    <tr>
+      <th>勤務地</th>
+      <td>事業所名 <span class="placeholder-new input-text-xl">{勤務地名}</span></td>
+      <td colspan="2">事業所CD <span class="placeholder-new" style="width:80px;">{勤務地コード}</span></td>
+    </tr>
+    <tr>
+      <th>業務内容</th>
+      <td colspan="3">
+        <span class="placeholder-new" style="min-width:200px;">調理および付随業務全般</span> ・ その他 ( <span class="placeholder-new input-text-l">{業務内容_その他}</span> )
+        <span class="small-text-new">業務上の必要に応じて勤務地を変更することがあります。</span>
+      </td>
+    </tr>
+    <tr>
+      <th rowspan="2">所定<br>労働時間</th>
+      <td>
+        契約時間 <span class="placeholder-new input-text-s">{契約時間}</span> 時間
+        <span class="small-text-new">※1日あたりの平均的な実働時間（フルタイムの場合は8時間）</span>
+      </td>
+      <td colspan="2">
+        週あたり労働時間 <span class="placeholder-new input-text-s">{週あたり労働時間}</span> 時間
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        契約日数 <span class="placeholder-new input-text-s">{契約日数}</span> 日
+        <span class="small-text-new">※1ヶ月あたりの平均的な勤務日数（フルタイムの場合は22日）</span>
+      </td>
+    </tr>
+    <tr>
+      <th>基本的な<br>勤務パターン</th>
+      <td colspan="3">
+        1. <span class="placeholder-new input-text-s">{勤務パターン1_開始時}</span> 時 <span class="placeholder-new input-text-s">{勤務パターン1_開始分}</span> 分 ～
+           <span class="placeholder-new input-text-s">{勤務パターン1_終了時}</span> 時 <span class="placeholder-new input-text-s">{勤務パターン1_終了分}</span> 分
+           （内休憩 <span class="placeholder-new input-text-s">{勤務パターン1_休憩分}</span> 分）
+           <span class="small-text-new" style="display:inline; margin-left:10px;">この時間帯を基本とし、シフト表により指示します。（変形労働時間制）</span>
+        <br>
+        2. <span class="placeholder-new input-text-s">{勤務パターン2_開始時}</span> 時 <span class="placeholder-new input-text-s">{勤務パターン2_開始分}</span> 分 ～
+           <span class="placeholder-new input-text-s">{勤務パターン2_終了時}</span> 時 <span class="placeholder-new input-text-s">{勤務パターン2_終了分}</span> 分
+           （内休憩 <span class="placeholder-new input-text-s">{勤務パターン2_休憩分}</span> 分）
+      </td>
+    </tr>
+    <tr>
+      <th>給与</th>
+      <td colspan="3">
+        時間給 <span class="placeholder-new input-text-m">{時給}</span> 円
+        <span style="float:right; margin-right:20px;">
+            ： <span class="placeholder-new input-text-s">{給与_加算1_金額}</span> 円<br>
+            ： <span class="placeholder-new input-text-s">{給与_加算2_金額}</span> 円
+        </span>
+        <div style="margin-top:5px;">
+          月あたり給与見込み <span class="placeholder-new input-text-m">{月あたり給与見込額}</span> 円
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th>賞与</th>
+      <td colspan="3">
+        <label class="checkbox-label-new"><input type="checkbox" disabled {賞与有無_ありチェック}>あり</label>
+        <label class="checkbox-label-new"><input type="checkbox" disabled {賞与有無_なしチェック}>なし</label>
+        <span class="small-text-new" style="display:inline; margin-left:10px;">会社の業績等の要因により不支給となることがあります。</span>
+      </td>
+    </tr>
+    <tr>
+      <th>次回更新</th>
+      <td colspan="3">
+        <label class="checkbox-label-new"><input type="checkbox" disabled {次回更新_条件合意}>□契約満了時の業務量、勤務成績、態度、能力、経営状況等により判断いたします。</label><br>
+        <label class="checkbox-label-new"><input type="checkbox" disabled {次回更新_最終}>□今回の契約更新を最後といたします。</label>
+      </td>
+    </tr>
+    <tr>
+      <th>社会保険</th>
+      <td colspan="3">
+        <label class="checkbox-label-new"><input type="checkbox" disabled {社会保険_全て加入}>□A.健康保険・厚生年金・雇用保険の全てに加入</label><br>
+        <label class="checkbox-label-new"><input type="checkbox" disabled {社会保険_雇保のみ}>□B.雇用保険のみ加入</label><br>
+        <label class="checkbox-label-new"><input type="checkbox" disabled {社会保険_いずれも加入せず}>□C.いずれにも加入しない</label>
+        <span class="small-text-new" style="margin-left:10px;">契約条件が法定の要件を満たした場合には、健康保険・厚生年金・雇用保険に加入いただきます。<br>週20時間以上は雇用保険加入 / 週20時間以上かつ月あたり給与見込み88,000円以上は全ての社会保険に加入</span>
+      </td>
+    </tr>
+    <tr>
+      <th>休日</th>
+      <td colspan="3"><span class="small-text-new">契約日数に基づき、月次シフト表により指示します。</span></td>
+    </tr>
+    <tr>
+      <th>有給休暇</th>
+      <td colspan="3"><span class="small-text-new">入社から６ヶ月間、契約日数の８割以上勤務した場合に初回付与します。付与日数は契約日数によって異なります。<br>２回目以降は入社より１年６ヶ月後、以降毎年４月１日に就業規則に定める基準を満たした場合に付与します。</span></td>
+    </tr>
+    <tr>
+      <th>給与改定</th>
+      <td colspan="3"><span class="small-text-new">次回契約更新時に個人の評価、会社業績等により見直しを行う場合があります。今回の契約期間中に給与を改定する場合は、別途変更雇用契約書を作成することとします。</span></td>
+    </tr>
+    <tr>
+      <th>その他</th>
+      <td colspan="3">
+        <ol style="margin:0; padding-left:1.5em; font-size:8.5pt; line-height:1.3;">
+          <li>月度における勤務日数、時間については業務の状況により変動することがあります。</li>
+          <li>所定外労働・休日労働をさせることがあります。</li>
+          <li>賃金は毎月月末締めとし、翌月２０日に被用者本人の指定口座に振り込みます。</li>
+          <li>退職及び解雇の基準は就業規則に準じます。</li>
+          <li>上記に記載されていないほかの就労条件等は、就業規則に準じます。</li>
+        </ol>
+      </td>
+    </tr>
+    <tr>
+      <th>備考</th>
+      <td colspan="3">
+        <div style="float:left; width:85%;">
+            <span class="placeholder-new" style="width:98%; display:block; min-height:2em;">{備考}</span>
+        </div>
+        <div style="float:right; width:13%; text-align:center;">
+            <span class="small-text-new" style="font-size:7.5pt;">別紙の注意事項もご確認ください。</span>
+            <div class="qr-code-placeholder">QR</div>
+        </div>
+        <div class="clear"></div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="footer-text-new">
+    使用者と被用者間において、上記の通り雇用契約を締結し、互いに誠実にこれを履行する。
+  </div>
+
+  <div class="signature-section-new">
+    <div class="date-entry">
+      記入日 <span class="placeholder-new" style="width:50px;">{記入日_年}</span> 年
+              <span class="placeholder-new" style="width:30px;">{記入日_月}</span> 月
+              <span class="placeholder-new" style="width:30px;">{記入日_日}</span> 日
+    </div>
+    <div class="company-signature">
+      <p>使用者 <span style="font-size:8pt; margin-left:5px;">ONODERA GROUP</span></p>
+      <p class="company-name-large">(会社) 株式会社 LEOC</p>
+      <p class="representative-name">代表取締役 田島 利行 <span class="seal-placeholder-new">（社印）</span></p>
+    </div>
+    <div class="employee-signature">
+      <p>被用者 住所</p>
+      <p>(本人) <span class="placeholder-new" style="width:90%; display:block;">{住所_現住所}</span></p>
+      <p style="margin-top: 8px;">氏名 <span class="placeholder-new" style="min-width: 180px; display:inline-block;">{氏名}</span>
+         <span class="employee-seal-mark">印</span>
+      </p>
+    </div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="approval-section">
+    <div class="approval-box"><div class="title">契約<br>責任者</div> <span class="placeholder-new" style="min-width:80%; display:block; height:1.2em;">{契約責任者名}</span></div>
+    <div class="approval-box"><div class="title">上長</div> <span class="placeholder-new" style="min-width:80%; display:block; height:1.2em;">{上長氏名}</span></div>
+    <div class="approval-box"><div class="title">事業<br>管理部</div> <span class="placeholder-new" style="min-width:80%; display:block; height:1.2em;">{事業管理部担当者名}</span></div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="bottom-summary">
+    ({契約時点}) {契約時間}時間×{契約日数}日 社保：{社保加入状況} 雇保：{雇保加入状況}<br>
+    入社年月日：{入社年月日}
+  </div>
+
+</div>
+</body>
+</html>

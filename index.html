@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25年度10月契約更新手続き</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better view with potential error messages */
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #1c1e21;
+            margin-bottom: 10px;
+        }
+        .description {
+            font-size: 14px;
+            color: #606770;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            text-align: left;
+        }
+        .description strong {
+            background-color: #e7e7e7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s, background-color 0.3s; /* Added for smooth transition */
+        }
+        .form-group input::placeholder {
+            color: #90949c;
+            opacity: 1; /* Ensure default placeholder is visible */
+        }
+
+        /* Styles for input error state */
+        .form-group input.input-error {
+            border-color: #e74c3c; /* A slightly softer red for border */
+            background-color: #fee; /* Light pink/red background */
+        }
+        .form-group input.input-error::placeholder {
+            color: #e74c3c; 
+            opacity: 0.8; 
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1877f2;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .login-button:hover {
+            background-color: #166fe5;
+        }
+        .forgot-password {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #1877f2;
+            text-decoration: none;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        .contact-info {
+            font-size: 13px;
+            color: #606770;
+            text-align: left;
+            line-height: 1.6;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+        .contact-info p {
+            margin-bottom: 8px;
+        }
+        .contact-info a {
+            color: #1877f2;
+            text-decoration: none;
+        }
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>25年度10月契約更新手続き</h1>
+        <p class="description">
+            従業員番号とパスワード<br>
+            （LEOC＋生年月日 例）1980年6月19日生まれの場合 <strong>LEOC19800619</strong>）<br>
+            をご入力し契約更新手続きを開始してください。
+        </p>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="employee-id">従業員番号</label>
+                <input type="text" id="employee-id" name="employee-id" placeholder="例: 097162">
+            </div>
+
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" placeholder="例: LEOC19800619">
+            </div>
+
+            <button type="submit" class="login-button">ログイン</button>
+        </form>
+
+        <a href="forgot_password.html" class="forgot-password">パスワードをお忘れの方</a>
+
+        <div class="contact-info">
+            <p>契約更新手続きでご不明な点等ございましたら<br>
+            担当事業部長もしくは本社給与計算部へご連絡をお願い致します。</p>
+            <p>担当事業部長：<a href="mailto:dummy.division.manager@example.com">dummy.division.manager@example.com</a></p>
+            <p>本社給与計算部：<a href="mailto:dummy.payroll.dept@example.com">dummy.payroll.dept@example.com</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('login-form');
+            const employeeIdInput = document.getElementById('employee-id');
+            const passwordInput = document.getElementById('password');
+
+            const originalPlaceholders = {
+                'employee-id': employeeIdInput.placeholder,
+                'password': passwordInput.placeholder
+            };
+            const errorPlaceholderText = 'このフィールドを入力してください。';
+
+            // --- localStorageのキー名 ---
+            const FIRST_LOGIN_FLAG_KEY = 'isFirstLogin';
+
+            function setInputError(inputElement) {
+                inputElement.classList.add('input-error');
+                if (!inputElement.dataset.originalPlaceholder) {
+                    inputElement.dataset.originalPlaceholder = inputElement.placeholder;
+                }
+                inputElement.placeholder = errorPlaceholderText;
+            }
+
+            function clearInputError(inputElement) {
+                inputElement.classList.remove('input-error');
+                inputElement.placeholder = inputElement.dataset.originalPlaceholder || originalPlaceholders[inputElement.id];
+            }
+
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission for now
+                let isValid = true;
+
+                clearInputError(employeeIdInput);
+                clearInputError(passwordInput);
+
+                if (employeeIdInput.value.trim() === '') {
+                    setInputError(employeeIdInput);
+                    isValid = false;
+                }
+
+                if (passwordInput.value.trim() === '') {
+                    setInputError(passwordInput);
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    // --- ログイン成功後の処理 ---
+                    console.log('Login successful (validation passed).');
+
+                    // isFirstLoginフラグをlocalStorageから取得
+                    // getItemは文字列を返すか、キーが存在しない場合はnullを返す
+                    let isFirstLogin = localStorage.getItem(FIRST_LOGIN_FLAG_KEY);
+
+                    // 実際の認証処理がここに入る想定
+                    // ダミーで、特定のID/PWでログイン成功とする
+                    const enteredId = employeeIdInput.value.trim();
+                    const enteredPassword = passwordInput.value; // パスワードはtrimしない
+
+                    // ここでは認証自体はスキップし、フラグのみで遷移を決定
+                    // 本番環境ではサーバーでの認証結果と初回ログインフラグを組み合わせる
+
+                    if (isFirstLogin === null || isFirstLogin === 'true') {
+                        // 初回ログインの場合
+                        console.log('First login detected. Navigating to password setup.');
+                        // 初回ログインが完了したとみなし、フラグを更新
+                        // このフラグ更新は、実際には「パスワード初期設定.html」で設定完了後に行うべき
+                        // localStorage.setItem(FIRST_LOGIN_FLAG_KEY, 'false'); 
+                        // ↑上記は「パスワード初期設定.html」で行う
+                        window.location.href = 'password_initial_setup.html';
+                    } else {
+                        // 2回目以降のログインの場合
+                        console.log('Returning user. Navigating to document selection.');
+                        window.location.href = 'select_delivery_option.html';
+                    }
+
+                } else {
+                    console.log('Login form validation failed.');
+                    // event.preventDefault() は既に行われているので不要
+                }
+            });
+
+            [employeeIdInput, passwordInput].forEach(input => {
+                if (!input.dataset.originalPlaceholder) {
+                    input.dataset.originalPlaceholder = input.placeholder;
+                }
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-error')) {
+                        clearInputError(this);
+                    }
+                });
+            });
+
+            // --- デバッグ用: localStorageのフラグをリセットする ---
+            // 以下の行のコメントを外してページをリロードすると、初回ログイン状態に戻せます。
+            // localStorage.removeItem(FIRST_LOGIN_FLAG_KEY);
+            // console.log('First login flag reset for testing.');
+        });
+    </script>
+</body>
+</html>

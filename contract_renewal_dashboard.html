@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>契約更新ダッシュボード</title> <!-- タイトルも変更 -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f7f9;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .dashboard-container {
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        .dashboard-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px; /* 事業所名表示エリアとの区切り */
+            border-bottom: 1px solid #e0e0e0; /* 区切り線 */
+        }
+
+        .dashboard-header h1 {
+            font-size: 24px;
+            margin-top: 0; /* 上マージン調整 */
+            margin-bottom: 8px; /* 下マージン調整 */
+            color: #2c3e50;
+        }
+
+        .office-info { /* 新しく追加する事業所情報エリアのスタイル */
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .office-info strong {
+            font-weight: 600;
+            color: #333;
+        }
+
+
+        .actions-filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .actions-filter-bar .filter-group,
+        .actions-filter-bar .action-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .actions-filter-bar input[type="text"],
+        .actions-filter-bar select {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .actions-filter-bar input[type="text"]::placeholder {
+            color: #aaa;
+        }
+
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #7f8c8d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #6c7a89;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .dashboard-table {
+            width: 100%;
+            min-width: 3000px; 
+            border-collapse: collapse;
+            white-space: nowrap;
+        }
+
+        .dashboard-table th,
+        .dashboard-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: middle;
+        }
+
+        .dashboard-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+            white-space: nowrap;
+        }
+        .dashboard-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .dashboard-table thead th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background-color: #f8f9fa;
+        }
+         .dashboard-table tbody td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 0;
+            background-color: #fff; 
+        }
+        .dashboard-table td[contenteditable="true"] {
+            background-color: #f0f8ff; 
+            cursor: text;
+        }
+        .dashboard-table td.highlight-changed {
+            background-color: #fffacd !important; 
+            font-weight: bold;
+            outline: 1px dashed #f39c12; 
+        }
+
+
+        .dashboard-table tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        .status-label {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            color: white;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .status-managing { background-color: #3498db; }
+        .status-pending { background-color: #1abc9c; }
+        .status-member-support { background-color: #f1c40f; color:#333; }
+        .status-rejected { background-color: #e74c3c; }
+        .status-completed { background-color: #2ecc71; }
+        .status-default { background-color: #95a5a6; }
+
+        .dashboard-table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .remarks-icon { 
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+         .delay-flag-true {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .confirmation-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f5ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 6px;
+            text-align: right;
+        }
+        .confirmation-area p {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>契約更新ダッシュボード</h1>
+            <div class="office-info">
+                <p>
+                    <strong>事業所:</strong> 首都圏BI第二事業本部　東京BI第4事業部<br>
+                    <strong>事業部長:</strong> 木村浩一郎
+                </p>
+            </div>
+            <!-- 不要な文言は削除しました -->
+        </header>
+
+        <div class="actions-filter-bar">
+            <div class="filter-group">
+                <input type="text" id="employeeFilter" placeholder="従業員で絞り込む">
+                <button class="btn btn-danger" id="deleteSelectedBtn">チェックした依頼を削除する</button>
+                <button class="btn btn-secondary" id="resetToDefaultBtn">選択をデフォルト値に戻す</button>
+            </div>
+            <div class="filter-group">
+                <select id="statusFilter">
+                    <option value="incomplete">手続の状況 未完了</option>
+                    <option value="all">手続の状況 全て</option>
+                    <option value="complete">手続の状況 完了</option>
+                </select>
+                <select id="dateFilterType">
+                    <option value="request_date">依頼日</option>
+                    <option value="due_date">提出期限</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="dashboard-table" id="dashboardTable">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAllCheckbox" title="すべて選択"></th>
+                        <th>ステータス</th>
+                        <th>送付日</th>
+                        <th>開封日</th>
+                        <th>同意</th>
+                        <th>同意日</th>
+                        <th>事業所名</th>
+                        <th>従業員番号</th>
+                        <th>従業員名</th>
+                        <th>雇用形態</th>
+                        <th>契約開始日</th>
+                        <th>契約終了日</th>
+                        <th>時給</th>
+                        <th>責任者手当</th>
+                        <th>賞与年間 (月数)</th>
+                        <th>契約時間数（1日）</th>
+                        <th>契約日数（月間）</th>
+                        <th>シフト1</th>
+                        <th>シフト1休憩(分)</th>
+                        <th>シフト2</th>
+                        <th>シフト2休憩(分)</th>
+                        <th>第2加算時給</th>
+                        <th>第3加算時給</th>
+                        <th>第4加算時給</th>
+                        <th>その他手当1</th>
+                        <th>その他手当2</th>
+                        <th>社会保険加入</th>
+                        <th>雇用保険加入</th>
+                        <th>リマインド日</th>
+                        <th>提出期限</th>
+                        <th>遅延フラグ</th>
+                        <th>備考</th>
+                    </tr>
+                </thead>
+                <tbody id="dashboardTableBody">
+                    <!-- サンプルレコード 1 -->
+                    <tr data-record-id="1">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="管理中"><span class="status-label status-managing">管理中</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/03/15">2025/03/15</td>
+                        <td data-column-name="open_date" data-initial-value="2025/03/16">2025/03/16</td>
+                        <td data-column-name="agreement" data-initial-value="済">済</td>
+                        <td data-column-name="agreement_date" data-initial-value="2025/03/17">2025/03/17</td>
+                        <td data-column-name="office_name" data-initial-value="本社 第一事業部" contenteditable="true">本社 第一事業部</td>
+                        <td data-column-name="employee_id" data-initial-value="301001">301001</td>
+                        <td data-column-name="employee_name" data-initial-value="従業員 タロウ">従業員 タロウ</td>
+                        <td data-column-name="employment_type" data-initial-value="正社員" contenteditable="true">正社員</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/04/01" contenteditable="true">2025/04/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="hourly_wage" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="manager_allowance" data-initial-value="50000" contenteditable="true">50,000</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="2.0" contenteditable="true">2.0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="8.0" contenteditable="true">8.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="20" contenteditable="true">20</td>
+                        <td data-column-name="shift1" data-initial-value="9:00-18:00" contenteditable="true">9:00-18:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="60" contenteditable="true">60</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="10000" contenteditable="true">10,000</td>
+                        <td data-column-name="other_allowance2" data-initial-value="5000" contenteditable="true">5,000</td>
+                        <td data-column-name="social_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/03/25">2025/03/25</td>
+                        <td data-column-name="due_date" data-initial-value="2025/03/31">2025/03/31</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="手続き詳細を確認" contenteditable="true">手続き詳細を確認</td>
+                    </tr>
+                    <!-- サンプルレコード 2 -->
+                    <tr data-record-id="2">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="未着手"><span class="status-label status-default">未着手</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/02/10">2025/02/10</td>
+                        <td data-column-name="open_date" data-initial-value="-">-</td>
+                        <td data-column-name="agreement" data-initial-value="未">未</td>
+                        <td data-column-name="agreement_date" data-initial-value="-">-</td>
+                        <td data-column-name="office_name" data-initial-value="大阪支社" contenteditable="true">大阪支社</td>
+                        <td data-column-name="employee_id" data-initial-value="002031">002031</td>
+                        <td data-column-name="employee_name" data-initial-value="葉月 実花">葉月 実花</td>
+                        <td data-column-name="employment_type" data-initial-value="契約社員" contenteditable="true">契約社員</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/03/01" contenteditable="true">2025/03/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="2026/02/28" contenteditable="true">2026/02/28</td>
+                        <td data-column-name="hourly_wage" data-initial-value="1500" contenteditable="true">1,500</td>
+                        <td data-column-name="manager_allowance" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="0" contenteditable="true">0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="7.5" contenteditable="true">7.5</td>
+                        <td data-column-name="contract_days_month" data-initial-value="18" contenteditable="true">18</td>
+                        <td data-column-name="shift1" data-initial-value="10:00-18:30" contenteditable="true">10:00-18:30</td>
+                        <td data-column-name="shift1_break" data-initial-value="45" contenteditable="true">45</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="未加入">未加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/02/20">2025/02/20</td>
+                        <td data-column-name="due_date" data-initial-value="2025/02/28">2025/02/28</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="SmartHR 未合意" contenteditable="true">SmartHR 入力不要フォーム 未合意</td>
+                    </tr>
+                    <!-- サンプルレコード 3 -->
+                    <tr data-record-id="3">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="確認中"><span class="status-label status-pending">確認中</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/04/01">2025/04/01</td>
+                        <td data-column-name="open_date" data-initial-value="2025/04/02">2025/04/02</td>
+                        <td data-column-name="agreement" data-initial-value="済">済</td>
+                        <td data-column-name="agreement_date" data-initial-value="2025/04/02">2025/04/02</td>
+                        <td data-column-name="office_name" data-initial-value="東京サテライト" contenteditable="true">東京サテライト</td>
+                        <td data-column-name="employee_id" data-initial-value="300202">300202</td>
+                        <td data-column-name="employee_name" data-initial-value="文月 誠子">文月 誠子</td>
+                        <td data-column-name="employment_type" data-initial-value="地域正社員" contenteditable="true">地域正社員</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/05/01" contenteditable="true">2025/05/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="hourly_wage" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="manager_allowance" data-initial-value="30000" contenteditable="true">30,000</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="1.5" contenteditable="true">1.5ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="8.0" contenteditable="true">8.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="21" contenteditable="true">21</td>
+                        <td data-column-name="shift1" data-initial-value="9:30-18:30" contenteditable="true">9:30-18:30</td>
+                        <td data-column-name="shift1_break" data-initial-value="60" contenteditable="true">60</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="8000" contenteditable="true">8,000</td>
+                        <td data-column-name="other_allowance2" data-initial-value="3000" contenteditable="true">3,000</td>
+                        <td data-column-name="social_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/04/15">2025/04/15</td>
+                        <td data-column-name="due_date" data-initial-value="2025/04/20">2025/04/20</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="提出内容を確認" contenteditable="true">提出内容を確認 <span class="remarks-icon">💬</span></td>
+                    </tr>
+                    <!-- サンプルレコード 4 -->
+                    <tr data-record-id="4">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="メンバー対応中"><span class="status-label status-member-support">メンバー対応中</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/05/02">2025/05/02</td>
+                        <td data-column-name="open_date" data-initial-value="2025/05/03">2025/05/03</td>
+                        <td data-column-name="agreement" data-initial-value="未">未</td>
+                        <td data-column-name="agreement_date" data-initial-value="-">-</td>
+                        <td data-column-name="office_name" data-initial-value="福岡営業所" contenteditable="true">福岡営業所</td>
+                        <td data-column-name="employee_id" data-initial-value="040500">040500</td>
+                        <td data-column-name="employee_name" data-initial-value="神無月 光">神無月 光</td>
+                        <td data-column-name="employment_type" data-initial-value="契約社員107" contenteditable="true">契約社員107</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/06/01" contenteditable="true">2025/06/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="2025/11/30" contenteditable="true">2025/11/30</td>
+                        <td data-column-name="hourly_wage" data-initial-value="1800" contenteditable="true">1,800</td>
+                        <td data-column-name="manager_allowance" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="0.5" contenteditable="true">0.5ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="6.0" contenteditable="true">6.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="15" contenteditable="true">15</td>
+                        <td data-column-name="shift1" data-initial-value="10:00-17:00" contenteditable="true">10:00-17:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="60" contenteditable="true">60</td>
+                        <td data-column-name="shift2" data-initial-value="13:00-20:00" contenteditable="true">13:00-20:00</td>
+                        <td data-column-name="shift2_break" data-initial-value="60" contenteditable="true">60</td>
+                        <td data-column-name="additional_wage2" data-initial-value="200">200</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/05/15">2025/05/15</td>
+                        <td data-column-name="due_date" data-initial-value="2025/05/20">2025/05/20</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="従業員が入力内容を確認中..." contenteditable="true">従業員が入力内容を確認中...</td>
+                    </tr>
+                    <!-- サンプルレコード 5 -->
+                     <tr data-record-id="5">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="修正依頼中"><span class="status-label status-rejected">修正依頼中</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/03/20">2025/03/20</td>
+                        <td data-column-name="open_date" data-initial-value="2025/03/21">2025/03/21</td>
+                        <td data-column-name="agreement" data-initial-value="一部済">一部済</td>
+                        <td data-column-name="agreement_date" data-initial-value="2025/03/22">2025/03/22</td>
+                        <td data-column-name="office_name" data-initial-value="札幌支店" contenteditable="true">札幌支店</td>
+                        <td data-column-name="employee_id" data-initial-value="311501">311501</td>
+                        <td data-column-name="employee_name" data-initial-value="長月 奏">長月 奏</td>
+                        <td data-column-name="employment_type" data-initial-value="サプラー" contenteditable="true">サプラー</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/04/10" contenteditable="true">2025/04/10</td>
+                        <td data-column-name="contract_end_date" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="hourly_wage" data-initial-value="1200" contenteditable="true">1,200</td>
+                        <td data-column-name="manager_allowance" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="0" contenteditable="true">0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="4.0" contenteditable="true">4.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="10" contenteditable="true">10</td>
+                        <td data-column-name="shift1" data-initial-value="9:00-13:00" contenteditable="true">9:00-13:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="未加入">未加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="未加入">未加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/04/01">2025/04/01</td>
+                        <td data-column-name="due_date" data-initial-value="2025/04/05">2025/04/05</td>
+                        <td data-column-name="delay_flag" data-initial-value="あり"><span class="delay-flag-true">あり</span></td>
+                        <td data-column-name="remarks" data-initial-value="管理者が修正依頼送信済み" contenteditable="true">管理者が修正依頼送信済み</td>
+                    </tr>
+                    <!-- サンプルレコード 6 -->
+                    <tr data-record-id="6">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="完了済み"><span class="status-label status-completed">完了済み</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/02/05">2025/02/05</td>
+                        <td data-column-name="open_date" data-initial-value="2025/02/06">2025/02/06</td>
+                        <td data-column-name="agreement" data-initial-value="済">済</td>
+                        <td data-column-name="agreement_date" data-initial-value="2025/02/07">2025/02/07</td>
+                        <td data-column-name="office_name" data-initial-value="管理本部" contenteditable="true">管理本部</td>
+                        <td data-column-name="employee_id" data-initial-value="011011">011011</td>
+                        <td data-column-name="employee_name" data-initial-value="管理 太郎">管理 太郎</td>
+                        <td data-column-name="employment_type" data-initial-value="正社員" contenteditable="true">正社員</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/03/01" contenteditable="true">2025/03/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="hourly_wage" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="manager_allowance" data-initial-value="80000" contenteditable="true">80,000</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="4.0" contenteditable="true">4.0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="8.0" contenteditable="true">8.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="22" contenteditable="true">22</td>
+                        <td data-column-name="shift1" data-initial-value="9:00-18:00" contenteditable="true">9:00-18:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="60" contenteditable="true">60</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="15000" contenteditable="true">15,000</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="-">-</td>
+                        <td data-column-name="due_date" data-initial-value="2025/02/15">2025/02/15</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="全ての手続きが完了" contenteditable="true">全ての手続きが完了</td>
+                    </tr>
+                    <!-- サンプルレコード 7 -->
+                    <tr data-record-id="7">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="管理中"><span class="status-label status-managing">管理中</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/06/01">2025/06/01</td>
+                        <td data-column-name="open_date" data-initial-value="-">-</td>
+                        <td data-column-name="agreement" data-initial-value="未">未</td>
+                        <td data-column-name="agreement_date" data-initial-value="-">-</td>
+                        <td data-column-name="office_name" data-initial-value="名古屋オフィス" contenteditable="true">名古屋オフィス</td>
+                        <td data-column-name="employee_id" data-initial-value="350100">350100</td>
+                        <td data-column-name="employee_name" data-initial-value="東海 林檎">東海 林檎</td>
+                        <td data-column-name="employment_type" data-initial-value="契約社員" contenteditable="true">契約社員</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/07/01" contenteditable="true">2025/07/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="2026/06/30" contenteditable="true">2026/06/30</td>
+                        <td data-column-name="hourly_wage" data-initial-value="1600" contenteditable="true">1,600</td>
+                        <td data-column-name="manager_allowance" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="1.0" contenteditable="true">1.0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="7.0" contenteditable="true">7.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="16" contenteditable="true">16</td>
+                        <td data-column-name="shift1" data-initial-value="9:00-17:00" contenteditable="true">9:00-17:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="60" contenteditable="true">60</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="7000" contenteditable="true">7,000</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/06/15">2025/06/15</td>
+                        <td data-column-name="due_date" data-initial-value="2025/06/20">2025/06/20</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="新規採用" contenteditable="true">新規採用</td>
+                    </tr>
+                    <!-- サンプルレコード 8 -->
+                    <tr data-record-id="8">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="確認中"><span class="status-label status-pending">確認中</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/07/10">2025/07/10</td>
+                        <td data-column-name="open_date" data-initial-value="2025/07/11">2025/07/11</td>
+                        <td data-column-name="agreement" data-initial-value="済">済</td>
+                        <td data-column-name="agreement_date" data-initial-value="2025/07/11">2025/07/11</td>
+                        <td data-column-name="office_name" data-initial-value="沖縄ブランチ" contenteditable="true">沖縄ブランチ</td>
+                        <td data-column-name="employee_id" data-initial-value="050201">050201</td>
+                        <td data-column-name="employee_name" data-initial-value="島袋 花子">島袋 花子</td>
+                        <td data-column-name="employment_type" data-initial-value="地域正社員" contenteditable="true">地域正社員</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/08/01" contenteditable="true">2025/08/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="hourly_wage" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="manager_allowance" data-initial-value="20000" contenteditable="true">20,000</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="1.0" contenteditable="true">1.0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="7.5" contenteditable="true">7.5</td>
+                        <td data-column-name="contract_days_month" data-initial-value="20" contenteditable="true">20</td>
+                        <td data-column-name="shift1" data-initial-value="8:30-17:00" contenteditable="true">8:30-17:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="60" contenteditable="true">60</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="5000" contenteditable="true">5,000</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/07/20">2025/07/20</td>
+                        <td data-column-name="due_date" data-initial-value="2025/07/25">2025/07/25</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="書類確認中" contenteditable="true">書類確認中</td>
+                    </tr>
+                    <!-- サンプルレコード 9 -->
+                    <tr data-record-id="9">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="完了済み"><span class="status-label status-completed">完了済み</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/01/15">2025/01/15</td>
+                        <td data-column-name="open_date" data-initial-value="2025/01/16">2025/01/16</td>
+                        <td data-column-name="agreement" data-initial-value="済">済</td>
+                        <td data-column-name="agreement_date" data-initial-value="2025/01/17">2025/01/17</td>
+                        <td data-column-name="office_name" data-initial-value="広島支店" contenteditable="true">広島支店</td>
+                        <td data-column-name="employee_id" data-initial-value="720300">720300</td>
+                        <td data-column-name="employee_name" data-initial-value="瀬戸 楓">瀬戸 楓</td>
+                        <td data-column-name="employment_type" data-initial-value="契約社員107" contenteditable="true">契約社員107</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/02/01" contenteditable="true">2025/02/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="2025/07/31" contenteditable="true">2025/07/31</td>
+                        <td data-column-name="hourly_wage" data-initial-value="1300" contenteditable="true">1,300</td>
+                        <td data-column-name="manager_allowance" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="0" contenteditable="true">0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="5.0" contenteditable="true">5.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="12" contenteditable="true">12</td>
+                        <td data-column-name="shift1" data-initial-value="10:00-15:00" contenteditable="true">10:00-15:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="未加入">未加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="未加入">未加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="-">-</td>
+                        <td data-column-name="due_date" data-initial-value="2025/01/25">2025/01/25</td>
+                        <td data-column-name="delay_flag" data-initial-value="なし"><span class="delay-flag-false">なし</span></td>
+                        <td data-column-name="remarks" data-initial-value="短期間契約" contenteditable="true">短期間契約</td>
+                    </tr>
+                    <!-- サンプルレコード 10 -->
+                    <tr data-record-id="10">
+                        <td><input type="checkbox" class="row-checkbox"></td>
+                        <td data-column-name="status" data-initial-value="修正依頼中"><span class="status-label status-rejected">修正依頼中</span></td>
+                        <td data-column-name="send_date" data-initial-value="2025/08/01">2025/08/01</td>
+                        <td data-column-name="open_date" data-initial-value="2025/08/02">2025/08/02</td>
+                        <td data-column-name="agreement" data-initial-value="一部未">一部未</td>
+                        <td data-column-name="agreement_date" data-initial-value="-">-</td>
+                        <td data-column-name="office_name" data-initial-value="仙台支社" contenteditable="true">仙台支社</td>
+                        <td data-column-name="employee_id" data-initial-value="123456">123456</td>
+                        <td data-column-name="employee_name" data-initial-value="伊達 政宗">伊達 政宗</td>
+                        <td data-column-name="employment_type" data-initial-value="サプラー" contenteditable="true">サプラー</td>
+                        <td data-column-name="contract_start_date" data-initial-value="2025/09/01" contenteditable="true">2025/09/01</td>
+                        <td data-column-name="contract_end_date" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="hourly_wage" data-initial-value="1100" contenteditable="true">1,100</td>
+                        <td data-column-name="manager_allowance" data-initial-value="-" contenteditable="true">-</td>
+                        <td data-column-name="annual_bonus_months" data-initial-value="0" contenteditable="true">0ヶ月</td>
+                        <td data-column-name="contract_hours_day" data-initial-value="6.0" contenteditable="true">6.0</td>
+                        <td data-column-name="contract_days_month" data-initial-value="15" contenteditable="true">15</td>
+                        <td data-column-name="shift1" data-initial-value="9:00-15:00" contenteditable="true">9:00-15:00</td>
+                        <td data-column-name="shift1_break" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="shift2" data-initial-value="13:00-19:00" contenteditable="true">13:00-19:00</td>
+                        <td data-column-name="shift2_break" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
+                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
+                        <td data-column-name="other_allowance1" data-initial-value="3000" contenteditable="true">3,000</td>
+                        <td data-column-name="other_allowance2" data-initial-value="0" contenteditable="true">0</td>
+                        <td data-column-name="social_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="employment_insurance" data-initial-value="加入">加入</td>
+                        <td data-column-name="reminder_date" data-initial-value="2025/08/15">2025/08/15</td>
+                        <td data-column-name="due_date" data-initial-value="2025/08/20">2025/08/20</td>
+                        <td data-column-name="delay_flag" data-initial-value="あり"><span class="delay-flag-true">あり</span></td>
+                        <td data-column-name="remarks" data-initial-value="同意書再提出依頼" contenteditable="true">同意書再提出依頼</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="confirmation-area">
+            <p><span id="changedRecordCount">0</span>件のレコードに変更があります。</p>
+            <button class="btn btn-success" id="confirmAndUpdateBtn">変更を確定し人事マスタを更新</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableBody = document.getElementById('dashboardTableBody');
+
+            if (tableBody) {
+                tableBody.addEventListener('blur', function(event) {
+                    const cell = event.target;
+                    if (cell.tagName === 'TD' && cell.isContentEditable) {
+                        const initialValue = cell.dataset.initialValue || '';
+                        const currentValue = cell.textContent.trim();
+
+                        if (initialValue !== currentValue) {
+                            cell.classList.add('highlight-changed');
+                        } else {
+                            cell.classList.remove('highlight-changed');
+                        }
+                        updateChangedRecordCount();
+                    }
+                }, true);
+            }
+
+
+            function updateChangedRecordCount() {
+                if (!tableBody) return;
+                const changedCells = tableBody.querySelectorAll('td.highlight-changed');
+                const changedRecordIds = new Set();
+                changedCells.forEach(cell => {
+                    const row = cell.closest('tr');
+                    if (row && row.dataset.recordId) {
+                        changedRecordIds.add(row.dataset.recordId);
+                    }
+                });
+                const countElement = document.getElementById('changedRecordCount');
+                if (countElement) {
+                     countElement.textContent = changedRecordIds.size;
+                }
+            }
+
+            const resetBtn = document.getElementById('resetToDefaultBtn');
+            if (resetBtn && tableBody) {
+                resetBtn.addEventListener('click', function() {
+                    const selectedRows = tableBody.querySelectorAll('tr input.row-checkbox:checked');
+                    selectedRows.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        if (row) {
+                            const editableCells = row.querySelectorAll('td[contenteditable="true"]');
+                            editableCells.forEach(cell => {
+                                cell.textContent = cell.dataset.initialValue || '';
+                                cell.classList.remove('highlight-changed');
+                            });
+                        }
+                    });
+                    updateChangedRecordCount();
+                });
+            }
+            
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            if (selectAllCheckbox && tableBody) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    const rowCheckboxes = tableBody.querySelectorAll('input.row-checkbox');
+                    rowCheckboxes.forEach(checkbox => {
+                        checkbox.checked = selectAllCheckbox.checked;
+                    });
+                });
+            }
+            updateChangedRecordCount(); 
+        });
+    </script>
+</body>
+</html>
