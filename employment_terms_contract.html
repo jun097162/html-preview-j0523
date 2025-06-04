@@ -361,7 +361,8 @@
         .checkbox-symbol {
             font-size: 1.2em;
             margin-right: 8px;
-            font-family: "Segoe UI Symbol", sans-serif;
+            /* Using more compatible checkbox characters */
+            /* font-family: "Segoe UI Symbol", sans-serif; */
             flex-shrink: 0; 
             margin-top: 1px; 
         }
@@ -372,7 +373,7 @@
             word-break: break-word;
         }
         .bonus-months {
-            margin-left: 8px;
+            margin-left: 0.5em; /* Added space before (4カ月) */
             color: #333;
             white-space: nowrap; 
         }
@@ -435,14 +436,22 @@
             margin-top: 5px;
             padding: 2px 0; 
             position: relative;
-            font-weight: normal; 
-            line-height: 1.5; 
+            font-weight: bold; /* Changed to bold for agreed values */
+            font-size: 1.6em;    /* Increased font size for agreed values */
+            line-height: 1.2; /* Adjusted line-height for larger font */
+            word-break: break-all; /* Allow long names/dates to break */
         }
+        .signature-block .input-line#agreement-datetime-field,
+        .signature-block .input-line#employee-signature-field {
+             min-height: 40px; /* Ensure enough height for larger font */
+        }
+
         .signature-block .seal-placeholder {
             position: absolute;
             right: 5px;
             bottom: 0;
-            font-size: 0.9em;
+            font-size: 0.9em; /* Seal placeholder remains normal size */
+            font-weight: normal; /* Seal placeholder remains normal weight */
         }
         .responsible-person-section {
             border: 1px solid #ccc;
@@ -463,7 +472,7 @@
             padding: 5px 10px; 
             text-align: center;
             margin-right: 10px;
-            font-size: 0.9em;
+            font-size: 1.0em;
             white-space: nowrap; 
         }
         .responsible-person-section .role:last-child {
@@ -493,6 +502,13 @@
                 justify-content: center; 
                 width: 100%;
                 margin-bottom: 10px; 
+                text-align: center; /* Ensure h1 and status indicator are centered */
+            }
+             .main-content h1 {
+                white-space: normal; /* Allow title to wrap on small screens */
+            }
+            #agreement-status-indicator {
+                font-size: 1.5em; /* Adjust for smaller screens */
             }
             .post-agreement-actions {
                 margin-left: 0; 
@@ -505,11 +521,6 @@
             }
             .post-agreement-actions .action-btn-small {
                  width: 45%; 
-            }
-
-
-            #agreement-status-indicator {
-                margin-top: 5px; 
             }
             .contract-viewer {
                  padding: 10px;
@@ -554,6 +565,9 @@
             .signature-block {
                 width: 100%; 
             }
+             .signature-block .input-line {
+                font-size: 1.5em; /* Adjust agreed value font for small screens */
+            }
             .responsible-person-section {
                 flex-direction: column; 
                 align-items: flex-start;
@@ -564,7 +578,7 @@
             .responsible-person-section .role {
                 margin-right: 0;
                 margin-bottom: 5px;
-                width: auto; 
+                width: 100%; 
             }
              .manager-name {
                 display: block; 
@@ -645,12 +659,12 @@
                     </div>
                 </div>
 
-                <div class="employee-name-header">山城 薫子 殿</div>
+                <div class="employee-name-header">剛腕怜王 殿</div> <!-- Changed Name -->
 
                 <h1>サプラー 雇用契約書 兼 労働条件確認書</h1>
 
                 <div class="section">
-                    <p>株式会社 LEOC と 山城 薫子 は、下記の通り雇用契約を締結する。</p>
+                    <p>株式会社 LEOC と 剛腕怜王 は、下記の通り雇用契約を締結する。</p> <!-- Changed Name -->
                 </div>
 
                 <div class="data-table">
@@ -712,10 +726,10 @@
                         <div class="data-label">賞与</div>
                         <div class="data-value">
                             <div class="checkbox-item">
-                                <span class="checkbox-symbol">?</span><span class="checkbox-text">あり</span><span class="bonus-months">(4カ月)</span>
+                                <span class="checkbox-symbol">□</span><span class="checkbox-text">あり</span><span class="bonus-months">(4カ月)</span> <!-- Adjusted spacing and checkbox char -->
                             </div>
                             <div class="checkbox-item">
-                                <span class="checkbox-symbol">?</span><span class="checkbox-text">なし</span>
+                                <span class="checkbox-symbol">✔</span><span class="checkbox-text">なし</span> <!-- Adjusted checkbox char -->
                             </div>
                             <div class="notes">会社の業績等の要因により不支給となることがあります。</div>
                         </div>
@@ -724,11 +738,11 @@
                         <div class="data-label">次回更新</div>
                         <div class="data-value">
                             <div class="checkbox-item">
-                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-symbol">✔</span> <!-- Adjusted checkbox char -->
                                 <span class="checkbox-text">契約満了時の業務量、勤務成績、態度、能力、経営状況等により判断いたします。</span>
                             </div>
                             <div class="checkbox-item">
-                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-symbol">□</span> <!-- Adjusted checkbox char -->
                                 <span class="checkbox-text">今回の契約更新を最後といたします。</span>
                             </div>
                         </div>
@@ -737,15 +751,15 @@
                         <div class="data-label">社会保険</div>
                         <div class="data-value">
                             <div class="checkbox-item">
-                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-symbol">□</span> <!-- Adjusted checkbox char -->
                                 <span class="checkbox-text">A.健康保険・厚生年金・雇用保険の全てに加入</span>
                             </div>
                             <div class="checkbox-item">
-                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-symbol">✔</span> <!-- Adjusted checkbox char -->
                                 <span class="checkbox-text">B.雇用保険のみ加入</span>
                             </div>
                             <div class="checkbox-item">
-                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-symbol">□</span> <!-- Adjusted checkbox char -->
                                 <span class="checkbox-text">C.いずれにも加入しない</span>
                             </div>
                             <div class="notes" style="border: 1px solid #ddd; padding: 8px; margin-top: 8px; background-color: #f9f9f9;">
@@ -794,7 +808,6 @@
                 </div>
 
                 <div class="signature-section">
-                    <!-- Removed .signature-date section -->
                     <div class="signature-blocks">
                         <div class="signature-block">
                             <div class="block-title">使用者<br>(会社)</div>
@@ -820,7 +833,7 @@
                 </div>
 
                 <div class="responsible-person-section">
-                    <div class="title">契約責任者</div> <!-- Removed <br> -->
+                    <div class="title">契約責任者</div> 
                     <div class="role">上長<span class="manager-name">山田 太郎</span></div>
                 </div>
 
@@ -853,7 +866,7 @@
                 <form id="agree-form">
                     <div class="form-group">
                         <label for="signer-name">署名<span class="required-label">必須</span></label>
-                        <input type="text" id="signer-name" name="signer_name" placeholder="入力例: 怜王 クニオ">
+                        <input type="text" id="signer-name" name="signer_name" placeholder="入力例: 小山田 ">
                         <span class="error-message" id="signer-name-error"></span>
                     </div>
                     <div class="form-group">
@@ -900,7 +913,6 @@
             const openAgreeModalBtn = document.getElementById('open-agree-modal-btn');
             const openRejectModalBtn = document.getElementById('open-reject-modal-btn');
             
-            // Enhanced logging for element fetching
             if (!agreeModal) console.error("Agree Modal element NOT FOUND (id: agree-modal)");
             else console.log("Agree Modal element found:", agreeModal);
 
@@ -1023,9 +1035,8 @@
                     populateContractContent('', ''); 
                 }
             }
-            loadAdditionalInfo(); // Call on page load
+            loadAdditionalInfo(); 
 
-            // Event Listeners for opening modals
             if (openAgreeModalBtn) {
                 openAgreeModalBtn.addEventListener('click', () => {
                     console.log("'Open Agree Modal' button clicked.");
@@ -1048,7 +1059,6 @@
                 });
             }
 
-            // Event Listeners for closing modals
             if (cancelAgreeBtn) cancelAgreeBtn.addEventListener('click', () => closeModal(agreeModal));
             if (cancelRejectBtn) cancelRejectBtn.addEventListener('click', () => closeModal(rejectModal));
             
