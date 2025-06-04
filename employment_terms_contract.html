@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>労働条件通知書 兼 雇用契約書</title>
     <style>
+        /* Styles from original employment_terms_contract.html */
         body {
             font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
             background-color: #f8f9fa;
             margin: 0;
             padding: 0;
             color: #333;
+            font-size: 14px; /* Base font size from renewal_contract_format */
+            line-height: 1.6;   /* Base line height from renewal_contract_format */
         }
         .page-header {
             background-color: #fff;
@@ -55,7 +58,7 @@
 
         .main-content {
             padding: 30px;
-            max-width: 900px;
+            max-width: 900px; /* Original max-width for overall page layout */
             margin: 20px auto;
             background-color: #fff;
             border-radius: 8px;
@@ -68,39 +71,72 @@
 
         .title-and-actions-row {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start; /* Align items to the top if actions take more height */
+            justify-content: space-between; 
+            align-items: center; 
+            width: 100%; 
+        }
+        
+        .page-main-title-wrapper { 
+             display: flex;
+             align-items: center;
+             gap: 15px; 
+             flex-grow: 1; 
+             justify-content: center; 
         }
 
-        h1 {
+        .main-content h1 { 
             font-size: 22px;
             color: #1c1e21;
             margin-top: 0;
             margin-bottom: 0;
+            white-space: nowrap; 
         }
         
-        /* === ▼▼▼ CSS変更 ▼▼▼ === */
+        #agreement-status-indicator {
+            font-size: 2em; 
+            color: red;
+            font-weight: bold;
+            white-space: nowrap;
+            display: none; 
+        }
+        
         .post-agreement-actions {
-            display: none; /* 初期は非表示。JSで 'flex' に変更 */
-            flex-direction: column; /* 内部要素（ボタン行とチェックボックス）を縦に並べる */
-            align-items: flex-end; /* 全体を右寄せにする */
-            gap: 8px; /* ボタン行とチェックボックスの間のスペース */
+            display: none; 
+            flex-direction: column; 
+            align-items: flex-end; 
+            gap: 8px; 
+            flex-shrink: 0; 
         }
 
-        .action-buttons-row-inner { /* 「印刷」「ダウンロード」ボタンの行 */
+        .action-buttons-row-inner { 
             display: flex;
-            gap: 10px; /* ボタン間のスペース */
+            gap: 10px; 
         }
+
+        .post-agreement-actions .action-btn-small {
+            padding: 8px 15px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0; 
+            display: inline-flex; 
+            align-items: center;
+            gap: 5px; 
+            width: 130px; 
+            justify-content: center; 
+        }
+
 
         .post-agreement-note-standalone {
             display: none;
-            text-align: right; /* 注意書きを右寄せ */
+            text-align: right; 
             font-size: 12px;
             color: #666;
             margin-top: 10px; 
         }
-        /* === ▲▲▲ CSS変更 ▲▲▲ === */
-
 
         .info-banner {
             background-color: #007bff;
@@ -110,20 +146,15 @@
             font-size: 14px;
             margin-bottom: 25px;
         }
-        .contract-viewer {
+        .contract-viewer { 
             border: 1px solid #ccc;
             border-radius: 6px;
-            padding: 20px;
+            padding: 20px; 
             margin-bottom: 25px;
             background-color: #fff;
             overflow-x: auto;
         }
-        .contract-viewer img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
+        
         .action-prompt { 
             text-align: center;
             font-size: 14px;
@@ -153,19 +184,7 @@
             color: #dc3545;
             border: 1px solid #dc3545;
         }
-        .post-agreement-actions .action-btn-small {
-            padding: 8px 15px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            color: #333;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0; 
-            display: inline-flex; 
-            align-items: center;
-            gap: 5px; 
-        }
+       
         .post-agreement-actions .action-btn-small svg { 
             width: 1em;
             height: 1em;
@@ -175,7 +194,6 @@
             display: inline-flex;
             align-items: center;
             font-size: 14px;
-            /* margin-left は .post-agreement-actions の align-items: flex-end で制御されるので不要 */
         }
         .post-agreement-actions .checkbox-option input[type="checkbox"] {
             margin-right: 5px;
@@ -193,7 +211,6 @@
             margin: 8px 0;
         }
 
-        /* モーダルスタイルは前回と同じなので省略 */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background-color: #fff; margin: auto; padding: 25px 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 500px; position: relative; }
         .modal-header { padding-bottom: 15px; border-bottom: 1px solid #e9ecef; margin-bottom: 20px; }
@@ -210,6 +227,362 @@
         .agree-modal-body .checkbox-group { margin-bottom: 15px; display: flex; align-items: center; }
         .agree-modal-body input[type="checkbox"] { margin-right: 10px; transform: scale(1.1); }
         .agree-modal-body .helper-link { font-size: 13px; color: #007bff; text-decoration: none; display: block; margin-top: 5px; }
+
+        /* --- Styles from renewal_contract_format.html (Merged) --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        /* Styles specific to the embedded contract content */
+        .embedded-contract-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background-color: #fff;
+        }
+        .embedded-contract-container h1 {
+            text-align: center;
+            font-size: 1.6em; 
+            margin-bottom: 25px;
+            color: #111;
+            font-weight: bold;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .header-top .employee-id {
+            font-weight: bold;
+        }
+        .header-top .department-info {
+            text-align: center;
+            font-size: 0.85em;
+            flex-grow: 1;
+            margin: 0 10px;
+        }
+        .header-top .document-meta {
+            text-align: right;
+        }
+        .logo-placeholder {
+            border: 2px solid #007bff;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #007bff;
+            margin-left: auto;
+        }
+        .employee-name-header {
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section p {
+            margin-bottom: 10px;
+        }
+        .data-table {
+            border: 1px solid #ccc;
+        }
+        .data-row {
+            display: flex; 
+            border-bottom: 1px solid #ccc;
+        }
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        .data-label {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            padding: 10px;
+            border-right: 1px solid #ccc; 
+            flex-basis: 130px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            overflow-wrap: break-word;
+            word-break: break-word; 
+        }
+        .data-value {
+            padding: 10px 15px; 
+            flex-grow: 1; 
+            overflow-wrap: break-word; 
+            word-break: break-word;   
+            min-width: 0; 
+        }
+        .data-value .sub-value {
+            margin-bottom: 5px;
+        }
+        .data-value .sub-value:last-child {
+            margin-bottom: 0;
+        }
+        .data-value .notes {
+            font-size: 0.85em;
+            color: #555;
+            margin-top: 5px;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .data-value .highlight {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        .office-cd {
+            border: 1px solid #ccc;
+            padding: 2px 8px;
+            margin: 0 8px;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        .time-info-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; 
+            flex-wrap: wrap; 
+        }
+        .time-info-wrapper > span { 
+            min-width: 0; 
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start; 
+            margin-bottom: 3px;
+        }
+        .checkbox-symbol {
+            font-size: 1.2em;
+            margin-right: 8px;
+            font-family: "Segoe UI Symbol", sans-serif;
+            flex-shrink: 0; 
+            margin-top: 1px; 
+        }
+        .checkbox-text {
+            flex-grow: 1;
+            min-width: 0; 
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .bonus-months {
+            margin-left: 8px;
+            color: #333;
+            white-space: nowrap; 
+        }
+        .currency-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .currency-field .currency-amount, .currency-field .currency-symbol {
+             min-width: 0; 
+        }
+        .signature-section {
+            margin-top: 30px;
+        }
+        .signature-blocks {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 20px; 
+        }
+        .signature-block {
+            width: 48%; 
+            margin-bottom: 15px;
+        }
+        .signature-block .block-title {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .signature-block .company-name {
+            font-size: 1.1em;
+        }
+        .signature-block .company-name-large {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .signature-block .representative {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .signature-block .representative-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .company-seal-img {
+            width: 60px; 
+            height: 60px;
+            vertical-align: middle;
+            margin-left: 15px;
+        }
+        .signature-block .field {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        .signature-block .input-line { 
+            border-bottom: 1px solid #333;
+            min-height: 25px; 
+            margin-top: 5px;
+            padding: 2px 0; 
+            position: relative;
+            font-weight: normal; 
+            line-height: 1.5; 
+        }
+        .signature-block .seal-placeholder {
+            position: absolute;
+            right: 5px;
+            bottom: 0;
+            font-size: 0.9em;
+        }
+        .responsible-person-section {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center; 
+            flex-wrap: nowrap; 
+        }
+        .responsible-person-section .title {
+            font-weight: bold;
+            margin-right: 10px; 
+            white-space: nowrap; 
+            flex-shrink: 0;
+        }
+        .responsible-person-section .role {
+            border: 1px solid #ccc;
+            padding: 5px 10px; 
+            text-align: center;
+            margin-right: 10px;
+            font-size: 0.9em;
+            white-space: nowrap; 
+        }
+        .responsible-person-section .role:last-child {
+            margin-right: 0;
+        }
+        .manager-name { 
+            display: inline; 
+            font-weight: normal;
+            font-size: 1em;
+            margin-left: 5px; 
+        }
+        .footer-info {
+            margin-top: 25px;
+            font-size: 0.85em;
+            color: #555;
+        }
+        
+        @media (max-width: 600px) {
+            .main-content {
+                padding: 15px;
+            }
+            .title-and-actions-row {
+                flex-direction: column; 
+                align-items: center; 
+            }
+            .page-main-title-wrapper {
+                justify-content: center; 
+                width: 100%;
+                margin-bottom: 10px; 
+            }
+            .post-agreement-actions {
+                margin-left: 0; 
+                align-items: center; 
+                width: 100%;
+            }
+            .action-buttons-row-inner {
+                justify-content: center; 
+                width: 100%;
+            }
+            .post-agreement-actions .action-btn-small {
+                 width: 45%; 
+            }
+
+
+            #agreement-status-indicator {
+                margin-top: 5px; 
+            }
+            .contract-viewer {
+                 padding: 10px;
+            }
+            .embedded-contract-container h1 {
+                font-size: 1.3em;
+            }
+            .data-row {
+                flex-direction: column; 
+            }
+            .data-label {
+                border-right: none; 
+                border-bottom: 1px solid #ccc; 
+                flex-basis: auto; 
+                width: 100%; 
+                justify-content: flex-start; 
+            }
+            .data-value {
+                width: 100%; 
+            }
+            .time-info-wrapper {
+                flex-direction: column;
+                align-items: flex-start; 
+            }
+            .time-info-wrapper > span {
+                width: 100%; 
+                margin-bottom: 5px; 
+            }
+            .time-info-wrapper > span:last-child {
+                margin-bottom: 0;
+            }
+            .currency-field {
+                flex-direction: column;
+                align-items: flex-start; 
+            }
+            .currency-field .currency-amount {
+                margin-bottom: 3px; 
+            }
+            .signature-blocks {
+                flex-direction: column;
+            }
+            .signature-block {
+                width: 100%; 
+            }
+            .responsible-person-section {
+                flex-direction: column; 
+                align-items: flex-start;
+            }
+            .responsible-person-section .title {
+                margin-bottom: 5px; 
+            }
+            .responsible-person-section .role {
+                margin-right: 0;
+                margin-bottom: 5px;
+                width: auto; 
+            }
+             .manager-name {
+                display: block; 
+                margin-left: 0;
+                margin-top: 3px;
+            }
+            .header-top { 
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-top .department-info, .header-top .document-meta {
+                text-align: left;
+                margin-top: 10px;
+            }
+            .logo-placeholder {
+                 margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -228,8 +601,10 @@
     <main class="main-content">
         <div class="page-title-container">
             <div class="title-and-actions-row">
-                <h1>労働条件通知書 兼 雇用契約書</h1>
-                <!-- === ▼▼▼ HTML構造変更 ▼▼▼ === -->
+                <div class="page-main-title-wrapper">
+                    <h1>労働条件通知書 兼 雇用契約書</h1>
+                    <span id="agreement-status-indicator">（合意済み）</span>
+                </div>
                 <div class="post-agreement-actions" id="post-agreement-actions">
                     <div class="action-buttons-row-inner"> 
                         <button type="button" class="action-btn-small" id="print-btn">
@@ -246,7 +621,6 @@
                         <label for="show-agreement-mark">合意マークを表示する</label>
                     </span>
                 </div>
-                <!-- === ▲▲▲ HTML構造変更 ▲▲▲ === -->
             </div>
             <p class="post-agreement-note-standalone" id="main-post-agreement-note">※書類が正しく表示されない場合は、PDFファイルをダウンロードして確認してください。</p>
         </div>
@@ -255,8 +629,207 @@
             就労条件に関する内容を含む書類です。
         </div>
 
-        <div class="contract-viewer">
-            <img src="合意前契約書.png" alt="労働条件通知書兼雇用契約書" id="contract-image">
+        <div class="contract-viewer" id="contract-display-area">
+            <!-- EMBEDDED CONTRACT CONTENT STARTS HERE -->
+            <div class="embedded-contract-container">
+                <div class="header-top">
+                    <div>
+                        <div class="employee-id">社員番号：378943</div>
+                    </div>
+                    <div class="department-info">
+                        <div>首都圏B1第二事業本部</div>
+                        <div>殿 東京B1第4事業部(榎本 淳)</div>
+                    </div>
+                    <div class="document-meta">
+                        <div class="logo-placeholder">サ</div>
+                    </div>
+                </div>
+
+                <div class="employee-name-header">山城 薫子 殿</div>
+
+                <h1>サプラー 雇用契約書 兼 労働条件確認書</h1>
+
+                <div class="section">
+                    <p>株式会社 LEOC と 山城 薫子 は、下記の通り雇用契約を締結する。</p>
+                </div>
+
+                <div class="data-table">
+                    <div class="data-row">
+                        <div class="data-label">雇用区分</div>
+                        <div class="data-value">サプラー</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">雇用期間</div>
+                        <div class="data-value">2024年 12月 1日 から 2025年 9月 30日 まで</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">勤務地</div>
+                        <div class="data-value">
+                            <div class="sub-value">
+                                事業所名 <span class="office-cd">314485</span> みずほ銀行清瀬
+                            </div>
+                            <div class="notes">業務上の必要に応じて勤務地を変更することがあります。</div>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">業務内容</div>
+                        <div class="data-value">調理および付随業務全般 ・ その他 (　　　　　　　　)</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">所定<br>労働時間</div>
+                        <div class="data-value">
+                            <div class="sub-value time-info-wrapper">
+                                <span>契約時間<span class="highlight">4</span>時間</span>
+                                <span>週あたり<br>労働時間<span class="highlight">7.4</span>時間</span>
+                            </div>
+                            <div class="notes">※1日あたりの平均的な実働時間 (フルタイムの場合は8時間)</div>
+                            <div class="sub-value" style="margin-top: 5px;">契約日数<span class="highlight">8</span>日</div>
+                            <div class="notes">※1ヶ月あたりの平均的な勤務日数 (フルタイムの場合は22日)</div>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">基本的な<br>勤務パターン</div>
+                        <div class="data-value">
+                            <div class="sub-value">1. <span style="margin: 0 5px;">　</span>時<span style="margin: 0 5px;">　</span>分～<span style="margin: 0 5px;">　</span>時<span style="margin: 0 5px;">　</span>分 (内休憩<span style="margin: 0 5px;">　</span>分)</div>
+                            <div class="sub-value">2. <span style="margin: 0 5px;">　</span>時<span style="margin: 0 5px;">　</span>分～<span style="margin: 0 5px;">　</span>時<span style="margin: 0 5px;">　</span>分 (内休憩<span style="margin: 0 5px;">　</span>分)</div>
+                            <div class="notes">この時間帯を基本とし、シフト表により指示します。(変形労働時間制)</div>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">給与</div>
+                        <div class="data-value">
+                            <div class="sub-value currency-field">
+                                <span class="currency-amount">時間給<span class="highlight">1,163</span>円</span>
+                                <span class="currency-symbol">：<span style="margin: 0 10px;">　</span>円</span>
+                            </div>
+                            <div class="sub-value currency-field">
+                                <span class="currency-amount">月あたり給与見込み<span class="highlight">37,216</span>円</span>
+                                <span class="currency-symbol">：<span style="margin: 0 10px;">　</span>円</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">賞与</div>
+                        <div class="data-value">
+                            <div class="checkbox-item">
+                                <span class="checkbox-symbol">?</span><span class="checkbox-text">あり</span><span class="bonus-months">(4カ月)</span>
+                            </div>
+                            <div class="checkbox-item">
+                                <span class="checkbox-symbol">?</span><span class="checkbox-text">なし</span>
+                            </div>
+                            <div class="notes">会社の業績等の要因により不支給となることがあります。</div>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">次回更新</div>
+                        <div class="data-value">
+                            <div class="checkbox-item">
+                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-text">契約満了時の業務量、勤務成績、態度、能力、経営状況等により判断いたします。</span>
+                            </div>
+                            <div class="checkbox-item">
+                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-text">今回の契約更新を最後といたします。</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">社会保険</div>
+                        <div class="data-value">
+                            <div class="checkbox-item">
+                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-text">A.健康保険・厚生年金・雇用保険の全てに加入</span>
+                            </div>
+                            <div class="checkbox-item">
+                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-text">B.雇用保険のみ加入</span>
+                            </div>
+                            <div class="checkbox-item">
+                                <span class="checkbox-symbol">?</span>
+                                <span class="checkbox-text">C.いずれにも加入しない</span>
+                            </div>
+                            <div class="notes" style="border: 1px solid #ddd; padding: 8px; margin-top: 8px; background-color: #f9f9f9;">
+                                契約条件が法定の要件を満たした場合には、健康保険・厚生年金・雇用保険に加入いただきます。<br>
+                                週20時間以上は雇用保険加入／ 週20時間以上かつ月あたり給与見込み 88,000円以上は全ての社会保険に加入
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">休日</div>
+                        <div class="data-value">契約日数に基づき、月次シフト表により指示します。</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">有給休暇</div>
+                        <div class="data-value">
+                            入社から6ヶ月間、契約日数の8割以上勤務した場合に初回付与します。付与日数は契約日数によって異なります。<br>
+                            2回目は入社より1年6ヶ月後、以降毎年4月1日に就業規則に定める基準を満たした場合に付与します。
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">給与改定</div>
+                        <div class="data-value">
+                            次回契約更新時に個人の評価、会社業績等により見直しを行う場合があります。今回の契約期間中に給与を改定する場合は、別途変更雇用契約書を作成することとします。
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">その他</div>
+                        <div class="data-value">
+                            1.月度における勤務日数、時間については業務の状況により変動することがあります。<br>
+                            2.所定外労働・休日労働をさせることがあります。<br>
+                            3.賃金は毎月末日締めとし、翌月20日に被用者本人の指定口座に振り込みます。<br>
+                            4.退職及び解雇の基準は就業規則に準じます。<br>
+                            5.上記に記載されていないほかの就労条件等は、就業規則に準じます。
+                        </div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">備考</div>
+                        <div class="data-value" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                            <span>別紙の注意事項もご確認ください。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section" style="margin-top: 25px;">
+                    <p>使用者と被用者間において、上記の通り雇用契約を締結し、互いに誠実にこれを履行する。</p>
+                </div>
+
+                <div class="signature-section">
+                    <!-- Removed .signature-date section -->
+                    <div class="signature-blocks">
+                        <div class="signature-block">
+                            <div class="block-title">使用者<br>(会社)</div>
+                            <div class="company-name">ONODERA GROUP</div>
+                            <div class="company-name-large">株式会社 LEOC</div>
+                            <div class="representative">
+                                代表取締役
+                                <span class="representative-name">田島 利行</span>
+                                <img src="leoc_stamp.png" alt="社印" class="company-seal-img" onerror="this.style.display='none'">
+                            </div>
+                        </div>
+                        <div class="signature-block">
+                            <div class="block-title">被用者<br>(本人)</div>
+                            <div class="field">合意日時</div>
+                            <div class="input-line" id="agreement-datetime-field" aria-label="合意日時表示欄"></div>
+                            
+                            <div class="field" style="margin-top: 10px;">氏名</div>
+                            <div class="input-line" id="employee-signature-field" aria-label="氏名表示欄">
+                                <span class="seal-placeholder">印</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="responsible-person-section">
+                    <div class="title">契約責任者</div> <!-- Removed <br> -->
+                    <div class="role">上長<span class="manager-name">山田 太郎</span></div>
+                </div>
+
+                <div class="footer-info">
+                    <div>(2024/10 時点) 4時間×12日 社保：非加入 雇保：非加入</div>
+                    <div>入社年月日：2023/10/11</div>
+                </div>
+            </div>
+            <!-- EMBEDDED CONTRACT CONTENT ENDS HERE -->
         </div>
 
         <p class="action-prompt" id="pre-agreement-prompt">書類を確認のうえ、「合意に進む」を押してください。</p>
@@ -271,7 +844,7 @@
         </div>
     </main>
 
-    <!-- モーダル (変更なし) -->
+    <!-- Modals (unchanged) -->
     <div id="agree-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h2>書類の合意</h2></div>
@@ -319,13 +892,28 @@
         </div>
     </div>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM fully loaded and parsed");
             const agreeModal = document.getElementById('agree-modal');
             const rejectModal = document.getElementById('reject-modal');
             const openAgreeModalBtn = document.getElementById('open-agree-modal-btn');
             const openRejectModalBtn = document.getElementById('open-reject-modal-btn');
+            
+            // Enhanced logging for element fetching
+            if (!agreeModal) console.error("Agree Modal element NOT FOUND (id: agree-modal)");
+            else console.log("Agree Modal element found:", agreeModal);
+
+            if (!rejectModal) console.error("Reject Modal element NOT FOUND (id: reject-modal)");
+            else console.log("Reject Modal element found:", rejectModal);
+
+            if (!openAgreeModalBtn) console.error("Open Agree Modal Button element NOT FOUND (id: open-agree-modal-btn)");
+            else console.log("Open Agree Modal Button element found:", openAgreeModalBtn);
+
+            if (!openRejectModalBtn) console.error("Open Reject Modal Button element NOT FOUND (id: open-reject-modal-btn)");
+            else console.log("Open Reject Modal Button element found:", openRejectModalBtn);
+
+
             const cancelAgreeBtn = document.getElementById('cancel-agree-btn');
             const cancelRejectBtn = document.getElementById('cancel-reject-btn');
             const submitAgreeBtn = document.getElementById('submit-agree-btn');
@@ -337,7 +925,9 @@
             const changeDeliveryMethodLink = document.getElementById('change-delivery-method-link');
             const rejectReasonInput = document.getElementById('reject-reason');
             const rejectReasonError = document.getElementById('reject-reason-error');
-            const contractImage = document.getElementById('contract-image');
+            
+            const agreementStatusIndicator = document.getElementById('agreement-status-indicator');
+
             const deliveryPreferenceStatusSpan = document.getElementById('delivery-preference-status');
             const receiptConfirmationStatusSpan = document.getElementById('receipt-confirmation-status');
             const preAgreementPrompt = document.getElementById('pre-agreement-prompt');
@@ -351,10 +941,25 @@
 
             const DELIVERY_PREFERENCE_KEY = 'deliveryPreference'; 
             const AGREEMENT_STATUS_KEY = 'agreementStatus';
+            const SIGNER_NAME_KEY = 'signerName';
+            const AGREEMENT_DATETIME_KEY = 'agreementDateTime';
 
-            function openModal(modal) { modal.style.display = 'flex'; }
+            function openModal(modal) { 
+                if (!modal) {
+                    console.error("openModal was called with a null or undefined modal. Cannot display.");
+                    return;
+                }
+                console.log("Attempting to open modal:", modal.id);
+                modal.style.display = 'flex'; 
+                console.log("Modal display style set to 'flex' for:", modal.id);
+            }
             
             function closeModal(modal) {
+                if (!modal) {
+                    console.error("closeModal was called with a null or undefined modal.");
+                    return;
+                }
+                console.log("Closing modal:", modal.id);
                 modal.style.display = 'none';
                 if (modal === agreeModal) {
                     signerNameInput.classList.remove('input-error');
@@ -367,119 +972,215 @@
                 window.scrollTo(0, 0); 
             }
 
+            function populateContractContent(name, dateTime) { 
+                console.log("Inside populateContractContent. Name: " + name + ", DateTime: " + dateTime);
+                const nameFieldInContract = document.getElementById('employee-signature-field');
+                if (nameFieldInContract) {
+                    nameFieldInContract.textContent = name ? name : '';
+                } else {
+                    console.error("Could NOT find 'employee-signature-field' in document.");
+                }
+
+                const dateTimeFieldInContract = document.getElementById('agreement-datetime-field');
+                if (dateTimeFieldInContract) {
+                    dateTimeFieldInContract.textContent = dateTime ? dateTime : '';
+                } else {
+                    console.error("Could NOT find 'agreement-datetime-field' in document.");
+                }
+            }
+
+            function updateAgreementStatusDisplay(isAgreed) {
+                if (agreementStatusIndicator) {
+                    agreementStatusIndicator.style.display = isAgreed ? 'inline' : 'none';
+                }
+            }
+
             function loadAdditionalInfo() {
+                console.log("loadAdditionalInfo called");
                 const preference = localStorage.getItem(DELIVERY_PREFERENCE_KEY);
                 deliveryPreferenceStatusSpan.textContent = (preference === 'electronic') ? '有' : (preference === 'paper') ? '書面で受取り' : '（未設定）';
                 
-                if (localStorage.getItem(AGREEMENT_STATUS_KEY) === 'agreed') {
+                const isAgreed = localStorage.getItem(AGREEMENT_STATUS_KEY) === 'agreed';
+                console.log("Is agreed (from localStorage)? " + isAgreed);
+                updateAgreementStatusDisplay(isAgreed);
+
+                if (isAgreed) {
                     receiptConfirmationStatusSpan.textContent = '済';
-                    contractImage.src = 'contract_signed.png'; 
-                    contractImage.alt = '労働条件通知書兼雇用契約書 (契約済)';
-                    preAgreementPrompt.style.display = 'none';
-                    preAgreementButtons.style.display = 'none';
-                    postAgreementActions.style.display = 'flex'; // ここは 'flex' のまま
+                    if(preAgreementPrompt) preAgreementPrompt.style.display = 'none';
+                    if(preAgreementButtons) preAgreementButtons.style.display = 'none';
+                    if(postAgreementActions) postAgreementActions.style.display = 'flex';
                     if (mainPostAgreementNote) mainPostAgreementNote.style.display = 'block';
+
+                    const storedSignerName = localStorage.getItem(SIGNER_NAME_KEY);
+                    const storedAgreementDateTime = localStorage.getItem(AGREEMENT_DATETIME_KEY);
+                    populateContractContent(storedSignerName, storedAgreementDateTime); 
                 } else {
                     receiptConfirmationStatusSpan.textContent = '未';
-                    contractImage.src = 'contract_pending_signature.png'; 
-                    contractImage.alt = '労働条件通知書兼雇用契約書';
-                    preAgreementPrompt.style.display = 'block';
-                    preAgreementButtons.style.display = 'flex';
-                    postAgreementActions.style.display = 'none';
+                    if(preAgreementPrompt) preAgreementPrompt.style.display = 'block';
+                    if(preAgreementButtons) preAgreementButtons.style.display = 'flex';
+                    if(postAgreementActions) postAgreementActions.style.display = 'none';
                     if (mainPostAgreementNote) mainPostAgreementNote.style.display = 'none';
+                    populateContractContent('', ''); 
                 }
             }
-            loadAdditionalInfo();
+            loadAdditionalInfo(); // Call on page load
 
-            openAgreeModalBtn.addEventListener('click', () => openModal(agreeModal));
-            openRejectModalBtn.addEventListener('click', () => openModal(rejectModal));
-            cancelAgreeBtn.addEventListener('click', () => closeModal(agreeModal));
-            cancelRejectBtn.addEventListener('click', () => closeModal(rejectModal));
+            // Event Listeners for opening modals
+            if (openAgreeModalBtn) {
+                openAgreeModalBtn.addEventListener('click', () => {
+                    console.log("'Open Agree Modal' button clicked.");
+                    if (agreeModal) {
+                        openModal(agreeModal);
+                    } else {
+                        console.error("Cannot open agree modal: agreeModal element is null at click time.");
+                    }
+                });
+            }
+            
+            if (openRejectModalBtn) {
+                openRejectModalBtn.addEventListener('click', () => {
+                    console.log("'Open Reject Modal' button clicked.");
+                    if (rejectModal) {
+                        openModal(rejectModal);
+                    } else {
+                        console.error("Cannot open reject modal: rejectModal element is null at click time.");
+                    }
+                });
+            }
+
+            // Event Listeners for closing modals
+            if (cancelAgreeBtn) cancelAgreeBtn.addEventListener('click', () => closeModal(agreeModal));
+            if (cancelRejectBtn) cancelRejectBtn.addEventListener('click', () => closeModal(rejectModal));
+            
             window.addEventListener('click', (event) => {
                 if (event.target === agreeModal) closeModal(agreeModal);
                 if (event.target === rejectModal) closeModal(rejectModal);
             });
-            changeDeliveryMethodLink.addEventListener('click', function(e){
-                e.preventDefault();
-                alert('書類の受け取り方法選択ページに遷移します。\n（現在のページの状態は保存されません）');
-                window.location.href = 'select_delivery_option.html'; 
-            });
 
+            if (changeDeliveryMethodLink) {
+                changeDeliveryMethodLink.addEventListener('click', function(e){
+                    e.preventDefault();
+                    console.log('書類の受け取り方法選択ページに遷移します。（現在のページの状態は保存されません）');
+                });
+            }
 
-            submitAgreeBtn.addEventListener('click', function() {
-                let isValid = true;
-                signerNameInput.classList.remove('input-error');
-                signerNameError.textContent = '';
-                agreeDeliveryError.textContent = '';
-                if (signerNameInput.value.trim() === '') {
-                    signerNameInput.classList.add('input-error');
-                    signerNameError.textContent = '氏名を入力してください。';
-                    isValid = false;
-                }
-                if (!agreeElectronicDeliveryCheckbox.checked) {
-                    agreeDeliveryError.textContent = '書類の受け取り方法に同意してください。';
-                    isValid = false;
-                }
+            if (submitAgreeBtn) {
+                submitAgreeBtn.addEventListener('click', function() {
+                    console.log("Submit Agree Button Clicked");
+                    let isValid = true;
+                    signerNameInput.classList.remove('input-error');
+                    signerNameError.textContent = '';
+                    agreeDeliveryError.textContent = '';
 
-                if (isValid) {
-                    alert('書類に合意しました。\n1. 契約更新ダッシュボードの合意完了欄にチェックが入りハイライトされます。\n2. 担当事業部長に完了通知メールが送信されます。\n（実際の処理は行われません）');
-                    
-                    contractImage.src = 'contract_signed.png';
-                    contractImage.alt = '労働条件通知書兼雇用契約書 (契約済)';
-                    receiptConfirmationStatusSpan.textContent = '済';
-                    
-                    preAgreementPrompt.style.display = 'none';
-                    preAgreementButtons.style.display = 'none';
-                    postAgreementActions.style.display = 'flex'; // ここは 'flex' のまま
-                    if (mainPostAgreementNote) mainPostAgreementNote.style.display = 'block';
+                    if (signerNameInput.value.trim() === '') {
+                        signerNameInput.classList.add('input-error');
+                        signerNameError.textContent = '氏名を入力してください。';
+                        isValid = false;
+                    }
+                    if (!agreeElectronicDeliveryCheckbox.checked) {
+                        agreeDeliveryError.textContent = '書類の受け取り方法に同意してください。';
+                        isValid = false;
+                    }
 
-                    localStorage.setItem(AGREEMENT_STATUS_KEY, 'agreed'); 
-                    closeModal(agreeModal);
-                }
-            });
+                    if (isValid) {
+                        console.log('書類に合意しました。');
+                        
+                        const signerName = signerNameInput.value.trim();
+                        const now = new Date();
+                        const year = now.getFullYear();
+                        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                        const day = now.getDate().toString().padStart(2, '0');
+                        const hours = now.getHours().toString().padStart(2, '0');
+                        const minutes = now.getMinutes().toString().padStart(2, '0');
+                        const seconds = now.getSeconds().toString().padStart(2, '0');
+                        const agreementDateTime = `${year}年${month}月${day}日 ${hours}時${minutes}分${seconds}秒`;
+                        
+                        populateContractContent(signerName, agreementDateTime); 
+                        updateAgreementStatusDisplay(true);
+                        
+                        receiptConfirmationStatusSpan.textContent = '済';
+                        if(preAgreementPrompt) preAgreementPrompt.style.display = 'none';
+                        if(preAgreementButtons) preAgreementButtons.style.display = 'none';
+                        if(postAgreementActions) postAgreementActions.style.display = 'flex'; 
+                        if (mainPostAgreementNote) mainPostAgreementNote.style.display = 'block';
 
-            submitRejectBtn.addEventListener('click', function() {
-                let isValid = true;
-                rejectReasonInput.classList.remove('input-error');
-                rejectReasonError.textContent = '';
-                if (rejectReasonInput.value.trim() === '') {
-                    rejectReasonInput.classList.add('input-error');
-                    rejectReasonError.textContent = '差し戻し理由を入力してください。';
-                    isValid = false;
-                }
-                if (isValid) {
-                    alert('書類を差し戻しました。\n1. 契約更新ダッシュボードの差し戻し欄に情報が更新されます。\n2. 担当事業部長に差し戻し通知メールが送信されます。\n（実際の処理は行われません）');
-                    closeModal(rejectModal);
-                }
-            });
-            
-            [signerNameInput, rejectReasonInput].forEach(input => {
-                input.addEventListener('input', function() {
-                    if (this.classList.contains('input-error')) {
-                        this.classList.remove('input-error');
-                        if (this.id === 'signer-name') signerNameError.textContent = '';
-                        if (this.id === 'reject-reason') rejectReasonError.textContent = '';
+                        localStorage.setItem(AGREEMENT_STATUS_KEY, 'agreed'); 
+                        localStorage.setItem(SIGNER_NAME_KEY, signerName);
+                        localStorage.setItem(AGREEMENT_DATETIME_KEY, agreementDateTime);
+                        
+                        closeModal(agreeModal);
                     }
                 });
-            });
-            agreeElectronicDeliveryCheckbox.addEventListener('change', function(){
-                if(this.checked){
-                    agreeDeliveryError.textContent = '';
+            } else {
+                console.error("submitAgreeBtn not found!");
+            }
+
+            if (submitRejectBtn) {
+                submitRejectBtn.addEventListener('click', function() {
+                    console.log("Submit Reject Button Clicked"); 
+                    let isValid = true;
+                    rejectReasonInput.classList.remove('input-error');
+                    rejectReasonError.textContent = '';
+                    if (rejectReasonInput.value.trim() === '') {
+                        rejectReasonInput.classList.add('input-error');
+                        rejectReasonError.textContent = '差し戻し理由を入力してください。';
+                        isValid = false;
+                    }
+                    if (isValid) {
+                        console.log('書類を差し戻しました。');
+                        localStorage.removeItem(AGREEMENT_STATUS_KEY);
+                        localStorage.removeItem(SIGNER_NAME_KEY);
+                        localStorage.removeItem(AGREEMENT_DATETIME_KEY);
+                        loadAdditionalInfo(); 
+                        closeModal(rejectModal);
+                    }
+                });
+            }
+
+            [signerNameInput, rejectReasonInput].forEach(input => {
+                if (input) {
+                    input.addEventListener('input', function() {
+                        if (this.classList.contains('input-error')) {
+                            this.classList.remove('input-error');
+                            if (this.id === 'signer-name') signerNameError.textContent = '';
+                            if (this.id === 'reject-reason') rejectReasonError.textContent = '';
+                        }
+                    });
                 }
             });
 
-            printBtn.addEventListener('click', function() { alert('印刷処理を実行します。（ダミー）'); });
-            downloadBtn.addEventListener('click', function() { alert('ダウンロード処理を実行します。（ダミー）'); });
-            showAgreementMarkCheckbox.addEventListener('change', function() {
-                alert(this.checked ? '合意マークを表示します。（ダミー）' : '合意マークを非表示にします。（ダミー）');
-            });
+            if (agreeElectronicDeliveryCheckbox) {
+                agreeElectronicDeliveryCheckbox.addEventListener('change', function(){
+                    if(this.checked){
+                        agreeDeliveryError.textContent = '';
+                    }
+                });
+            }
+
+            if (printBtn) {
+                printBtn.addEventListener('click', function() { 
+                    console.log("Print button clicked.");
+                    window.print(); 
+                });
+            }
+
+            if (downloadBtn) downloadBtn.addEventListener('click', function() { console.log('ダウンロード処理を実行します。（ダミー）'); });
+            if (showAgreementMarkCheckbox) {
+                showAgreementMarkCheckbox.addEventListener('change', function() {
+                    console.log(this.checked ? '合意マークを表示します。（ダミー）' : '合意マークを非表示にします。（ダミー）');
+                });
+            }
 
             if(resetStorageBtn) {
                 resetStorageBtn.addEventListener('click', function() {
+                    console.log("Reset storage button clicked"); 
                     localStorage.removeItem(DELIVERY_PREFERENCE_KEY);
                     localStorage.removeItem(AGREEMENT_STATUS_KEY);
-                    alert('テストデータをリセットしました。ページを再読み込みします。');
-                    window.location.reload();
+                    localStorage.removeItem(SIGNER_NAME_KEY);
+                    localStorage.removeItem(AGREEMENT_DATETIME_KEY);
+                    updateAgreementStatusDisplay(false);
+                    populateContractContent('', ''); 
+                    window.location.reload(); 
                 });
             }
         });
