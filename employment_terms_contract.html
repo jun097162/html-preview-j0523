@@ -437,13 +437,13 @@
             padding: 2px 0; 
             position: relative;
             font-weight: bold; /* Changed to bold for agreed values */
-            font-size: 1.6em;    /* Increased font size for agreed values */
+            font-size: 2em;    /* Increased font size for agreed values */
             line-height: 1.2; /* Adjusted line-height for larger font */
             word-break: break-all; /* Allow long names/dates to break */
         }
         .signature-block .input-line#agreement-datetime-field,
         .signature-block .input-line#employee-signature-field {
-             min-height: 40px; /* Ensure enough height for larger font */
+             min-height: 50px; /* Ensure enough height for larger font */
         }
 
         .signature-block .seal-placeholder {
@@ -472,7 +472,7 @@
             padding: 5px 10px; 
             text-align: center;
             margin-right: 10px;
-            font-size: 1.0em;
+            font-size: 0.9em;
             white-space: nowrap; 
         }
         .responsible-person-section .role:last-child {
@@ -578,7 +578,7 @@
             .responsible-person-section .role {
                 margin-right: 0;
                 margin-bottom: 5px;
-                width: 100%; 
+                width: auto; 
             }
              .manager-name {
                 display: block; 
@@ -816,7 +816,7 @@
                             <div class="representative">
                                 代表取締役
                                 <span class="representative-name">田島 利行</span>
-                                <img src="leoc_stamp.png" alt="社印" class="company-seal-img" onerror="this.style.display='none'">
+                                <img src="./leoc_stamp.png" alt="社印" class="company-seal-img" onerror="this.style.display='none'"> <!-- Updated src -->
                             </div>
                         </div>
                         <div class="signature-block">
@@ -866,7 +866,7 @@
                 <form id="agree-form">
                     <div class="form-group">
                         <label for="signer-name">署名<span class="required-label">必須</span></label>
-                        <input type="text" id="signer-name" name="signer_name" placeholder="入力例: 小山田 ">
+                        <input type="text" id="signer-name" name="signer_name" placeholder="入力例: 怜王 クニオ">
                         <span class="error-message" id="signer-name-error"></span>
                     </div>
                     <div class="form-group">
