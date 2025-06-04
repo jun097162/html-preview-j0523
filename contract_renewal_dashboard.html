@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>契約更新ダッシュボード</title>
+    <title>契約更新ダッシュボード（改修版 V7）</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -88,6 +88,9 @@
         .btn-success:hover { background-color: #27ae60; }
         .btn-danger { background-color: #e74c3c; color: white; }
         .btn-danger:hover { background-color: #c0392b; }
+        .btn-info { background-color: #5bc0de; color: white; } 
+        .btn-info:hover { background-color: #31b0d5; }
+
 
         .table-wrapper {
             width: 100%;
@@ -101,41 +104,86 @@
 
         .dashboard-table {
             width: 100%;
-            min-width: 3600px;
+            min-width: 5800px; 
             border-collapse: collapse;
             white-space: nowrap;
         }
 
         .dashboard-table th,
         .dashboard-table td {
-            padding: 12px 15px;
+            padding: 7px 9px; 
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-            vertical-align: middle;
+            border: 1px solid #e0e0e0; 
+            vertical-align: middle; 
+        }
+        .dashboard-table th.sub-header { 
+            padding-top: 2px;  
+            padding-bottom: 2px; 
+            font-size: 0.8em; 
+            text-align: center;
+            border-top: 1px solid #d0d0d0; 
+        }
+        .dashboard-table th[colspan="2"] {
+            border-bottom: none; 
+            text-align: center;
+        }
+        .dashboard-table th[rowspan="2"] {
+            vertical-align: middle; 
         }
 
-        .dashboard-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #555;
-            white-space: nowrap;
-        }
+
+        /* --- Sticky Header and Column Styling --- */
         .dashboard-table thead th {
             position: sticky;
-            top: 0;
-            z-index: 1; 
-        }
-        .dashboard-table thead th:first-child,
-        .dashboard-table tbody td:first-child {
-            position: sticky;
-            left: 0;
             background-color: #f8f9fa; 
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .dashboard-table thead tr:first-child th {
+            top: 0;
+            z-index: 5; 
+        }
+        .dashboard-table thead tr:first-child th:nth-child(-n+5) { 
+            background-color: #eff1f3; 
+            z-index: 7; 
+        }
+
+        .dashboard-table thead tr:nth-child(2) th {
+            position: sticky; 
+            background-color: #f8f9fa;
+            z-index: 4; 
+        }
+        .dashboard-table thead tr:nth-child(2) th:nth-child(-n+5) { 
+            background-color: #eff1f3;
+            z-index: 6; 
+        }
+        
+        .dashboard-table tbody td:nth-child(-n+5) {
+            position: sticky;
+            background-color: #fff; 
             z-index: 2; 
         }
-         .dashboard-table tbody td:first-child {
-            background-color: #fff; 
-            z-index: 0; 
+        
+        .dashboard-table th:nth-child(1), .dashboard-table td:nth-child(1) { left: 0; min-width: 50px; }
+        .dashboard-table th:nth-child(2), .dashboard-table td:nth-child(2) { left: 50px; min-width: 120px; }
+        .dashboard-table th:nth-child(3), .dashboard-table td:nth-child(3) { left: 170px; min-width: 200px; }
+        .dashboard-table th:nth-child(4), .dashboard-table td:nth-child(4) { left: 370px; min-width: 100px; }
+        .dashboard-table th:nth-child(5), .dashboard-table td:nth-child(5) { left: 470px; min-width: 150px; }
+        /* --- End of Sticky Styling --- */
+
+        
+        .current-value-cell,
+        .calculated-readonly-cell {
+            background-color: #f9f9f9;
+            color: #555;
         }
+        .highlight-average-ref {
+            background-color: #fff0f5 !important; 
+            font-weight: bold;
+        }
+
+
         .dashboard-table td[contenteditable="true"] {
             background-color: #f0f8ff;
             cursor: text;
@@ -147,12 +195,14 @@
         .dashboard-table td.highlight-changed {
             background-color: #fffacd !important;
             font-weight: bold;
-            outline: 1px dashed #f39c12;
         }
-        .highlight-labor-cost {
-            background-color: #e6f7ff !important;
+        .highlight-labor-cost { 
             font-weight: bold;
         }
+        .dashboard-table td.highlight-labor-cost {
+             background-color: #e6f7ff !important;
+        }
+
         .labor-cost-plus { color: green; }
         .labor-cost-minus { color: red; }
 
@@ -160,25 +210,18 @@
         .dashboard-table tbody tr:hover td {
             background-color: #f1f3f5 !important;
         }
-        .dashboard-table tbody tr.row-locked:hover td {
-             background-color: #f1f3f5 !important;
-        }
-        .dashboard-table tbody tr.row-locked td:first-child {
-             background-color: #d4edda !important; 
+        .dashboard-table tbody tr:hover td:nth-child(-n+5) { 
+            background-color: #e8ebee !important; 
         }
 
-
-        .row-highlight-agreed {
-            background-color: #d4edda !important;
-        }
         .row-highlight-agreed td { 
              background-color: #d4edda !important;
         }
         .row-locked.row-highlight-agreed td.editable-was-true {
             background-color: #cce5d0 !important; 
         }
-        .row-locked.row-highlight-agreed td:first-child {
-            background-color: #d4edda !important;
+        .row-highlight-agreed td:nth-child(-n+5) { 
+            background-color: #cce5d0 !important;
         }
 
 
@@ -193,13 +236,13 @@
             text-align: center;
         }
 
-        .status-managing { background-color: #3498db; }
-        .status-pending { background-color: #1abc9c; }
-        .status-member-support { background-color: #f1c40f; color:#333; }
-        .status-rejected { background-color: #e74c3c; }
-        .status-completed { background-color: #2ecc71; }
-        .status-default { background-color: #95a5a6; }
-        .status-returned {
+        .status-managing { background-color: #3498db; } 
+        .status-pending { background-color: #1abc9c; } 
+        .status-member-support { background-color: #f1c40f; color:#333; } 
+        .status-rejected { background-color: #e74c3c; } 
+        .status-completed { background-color: #2ecc71; } 
+        .status-default { background-color: #95a5a6; } 
+        .status-returned { 
             background-color: #e67e22;
             cursor: pointer;
             border: none;
@@ -213,80 +256,72 @@
             text-align: center;
         }
         .status-returned:hover { background-color: #d35400; }
-        .status-agreed { background-color: #28a745; }
+        .status-agreed { background-color: #28a745; } 
+        .status-notified { background-color: #5bc0de; } 
 
-
-        .dashboard-table input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        .remarks-icon {
-            color: #7f8c8d;
-            cursor: pointer;
-        }
-         .delay-flag-true {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        .confirmation-area {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9f5ff;
-            border: 1px solid #b3d7ff;
-            border-radius: 6px;
+        /* --- Column Widths & Alignment for Specific Data --- */
+        .dashboard-table td[data-column-name="hourly_wage_current"],
+        .dashboard-table td[data-column-name="hourly_wage_new"] {
+            min-width: 80px;
             text-align: right;
         }
-        .confirmation-area p {
-            margin: 0 0 10px 0;
-            font-size: 15px;
-            color: #2c3e50;
+        .dashboard-table td[data-column-name="manager_allowance_current"],
+        .dashboard-table td[data-column-name="manager_allowance_new"] {
+            min-width: 90px;
+            text-align: right;
         }
+        .dashboard-table td[data-column-name="annual_bonus_months_current"],
+        .dashboard-table td[data-column-name="annual_bonus_months_new"] {
+            min-width: 70px; 
+            text-align: right;
+        }
+        .dashboard-table td[data-column-name="contract_hours_day_current"],
+        .dashboard-table td[data-column-name="contract_hours_day_new"] {
+            min-width: 70px; 
+            text-align: right;
+        }
+        .dashboard-table td[data-column-name="contract_days_month_current"],
+        .dashboard-table td[data-column-name="contract_days_month_new"] {
+            min-width: 70px; 
+            text-align: right;
+        }
+        .dashboard-table td[data-column-name^="additional_wage2_"], 
+        .dashboard-table td[data-column-name^="additional_wage3_"],
+        .dashboard-table td[data-column-name^="additional_wage4_"] {
+            min-width: 80px;
+            text-align: right;
+        }
+        .dashboard-table td[data-column-name^="other_allowance1_"],
+        .dashboard-table td[data-column-name^="other_allowance2_"] {
+            min-width: 90px;
+            text-align: right;
+        }
+        .dashboard-table td[data-column-name="expected_labor_cost"],
+        .dashboard-table td[data-column-name="updated_labor_cost"],
+        .dashboard-table td[data-column-name="labor_cost_difference"] {
+            min-width: 100px; 
+            text-align: right;
+        }
+        /* --- End of Column Widths & Alignment --- */
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 6px;
-            position: relative;
-        }
+        .dashboard-table input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+        .delay-flag-true { color: #e74c3c; font-weight: bold; }
+        .delay-flag-false { color: #333; }
 
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+        .confirmation-area { margin-top: 20px; padding: 15px; background-color: #e9f5ff; border: 1px solid #b3d7ff; border-radius: 6px; text-align: right; }
+        .confirmation-area p { margin: 0 0 10px 0; font-size: 15px; color: #2c3e50; }
 
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 6px; position: relative; }
+        .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <h1>契約更新ダッシュボード</h1>
+            <h1>契約更新ダッシュボード（改修版 V7）</h1>
             <div class="office-info">
                 <p>
                     <strong>事業所:</strong> 首都圏BI第二事業本部　東京BI第4事業部<br>
@@ -298,6 +333,7 @@
         <div class="actions-filter-bar">
             <div class="filter-group">
                 <input type="text" id="employeeFilter" placeholder="従業員で絞り込む">
+                <button class="btn btn-info" id="notifySelectedBtn">チェックした方へ通知を送信</button>
                 <button class="btn btn-danger" id="deleteSelectedBtn">チェックした依頼を削除する</button>
                 <button class="btn btn-secondary" id="resetToDefaultBtn">選択をデフォルト値に戻す</button>
             </div>
@@ -318,45 +354,64 @@
             <table class="dashboard-table" id="dashboardTable">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="selectAllCheckbox" title="すべて選択"></th>
-                        <th>ステータス</th>
-                        <th>送付日</th>
-                        <th>開封日</th>
-                        <th>同意</th>
-                        <th>同意日</th>
-                        <th>事業所名</th>
-                        <th>従業員番号</th>
-                        <th>従業員名</th>
-                        <th>雇用形態</th>
-                        <th>契約開始日</th>
-                        <th>契約終了日</th>
-                        <th>時給</th>
-                        <th>責任者手当</th>
-                        <th>賞与年間 (月数)</th>
-                        <th>契約時間数（1日）</th>
-                        <th>契約日数（月間）</th>
-                        <th>シフト1</th>
-                        <th>シフト1休憩(分)</th>
-                        <th>シフト2</th>
-                        <th>シフト2休憩(分)</th>
-                        <th>第2加算時給</th>
-                        <th>第3加算時給</th>
-                        <th>第4加算時給</th>
-                        <th>その他手当1</th>
-                        <th>その他手当2</th>
-                        <th class="highlight-labor-cost">想定労務費</th>
-                        <th class="highlight-labor-cost">変更後労務費</th>
-                        <th class="highlight-labor-cost">変更後労務費乖離</th>
-                        <th>社会保険加入</th>
-                        <th>雇用保険加入</th>
-                        <th>リマインド日</th>
-                        <th>提出期限</th>
-                        <th>遅延フラグ</th>
-                        <th>備考</th>
+                        <th rowspan="2"><input type="checkbox" id="selectAllCheckbox" title="すべて選択"></th>
+                        <th rowspan="2">ステータス</th>
+                        <th rowspan="2">事業所名</th>
+                        <th rowspan="2">従業員番号</th>
+                        <th rowspan="2">従業員名</th>
+                        <th rowspan="2">送付日</th>
+                        <th rowspan="2">開封日</th>
+                        <th rowspan="2">同意</th>
+                        <th rowspan="2">同意日</th>
+                        <th rowspan="2">雇用形態</th>
+                        <th rowspan="2">契約開始日</th>
+                        <th colspan="2">契約終了日</th>
+                        <th colspan="2">時給</th>
+                        <th colspan="2">責任者手当</th>
+                        <th colspan="2">賞与年間(月数)</th>
+                        <th colspan="2">契約時間数/日</th>
+                        <th colspan="2">契約日数/月</th>
+                        <th rowspan="2" class="highlight-average-ref">3か月平均<br>勤務時間/日</th>
+                        <th rowspan="2" class="highlight-average-ref">3か月平均<br>勤務日数</th>
+                        <th colspan="2">シフト1</th>
+                        <th colspan="2">シフト1休憩(分)</th>
+                        <th colspan="2">シフト2</th>
+                        <th colspan="2">シフト2休憩(分)</th>
+                        <th colspan="2">第2加算時給</th>
+                        <th colspan="2">第3加算時給</th>
+                        <th colspan="2">第4加算時給</th>
+                        <th colspan="2">その他手当1</th>
+                        <th colspan="2">その他手当2</th>
+                        <th rowspan="2" class="highlight-labor-cost">想定労務費</th>
+                        <th rowspan="2" class="highlight-labor-cost">変更後労務費</th>
+                        <th rowspan="2" class="highlight-labor-cost">変更後労務費乖離</th>
+                        <th rowspan="2">社会保険加入</th>
+                        <th rowspan="2">雇用保険加入</th>
+                        <th rowspan="2">リマインド日</th>
+                        <th rowspan="2">提出期限</th>
+                        <th rowspan="2">遅延フラグ</th>
+                        <th rowspan="2">備考</th>
+                    </tr>
+                    <tr>
+                        <!-- 「現」「新」ヘッダー行 -->
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
+                        <th class="sub-header">現</th><th class="sub-header">新</th>
                     </tr>
                 </thead>
                 <tbody id="dashboardTableBody">
-                    <!-- JavaScriptによって50件のサンプルレコードがここに挿入されます -->
+                    <!-- JavaScript will insert sample records here -->
                 </tbody>
             </table>
         </div>
@@ -367,7 +422,7 @@
         </div>
     </div>
 
-    <!-- モーダル -->
+    <!-- Modal for rejection reason -->
     <div id="rejectionModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -377,6 +432,7 @@
     </div>
 
     <script>
+        // --- Global constants and helper functions (same as V6) ---
         const officeNamesFromCSV = [
             "上智大学１１号館ラウンジ", "中央合同庁舎７号館", "（株）リクルート空箱", "（株）リクルート（３０Ｆ）ほこらん",
             "（株）リクルートグラントウキヨウサウスタワー３６Ｆ侍", "日本体育大学世田谷キヤンパスカフエテリア",
@@ -387,37 +443,29 @@
             "パナソニック株式会社アプライアンス社　", "証券保管振替機構", "（株）千代田グラビヤ", "（株）ＢＭＬ本社",
              "（学）清泉女子大学", "ミズノ（株）"
         ];
-         const lastNames = ["佐藤", "鈴木", "高橋", "田中", "渡辺", "伊藤", "山本", "中村", "小林", "加藤", "吉田", "山田", "佐々木", "山口", "松本", "井上", "木村", "林", "斎藤", "清水"];
+        const lastNames = ["佐藤", "鈴木", "高橋", "田中", "渡辺", "伊藤", "山本", "中村", "小林", "加藤", "吉田", "山田", "佐々木", "山口", "松本", "井上", "木村", "林", "斎藤", "清水"];
         const firstNames = ["一郎", "花子", "太郎", "純子", "健太", "美咲", "大輔", "さくら", "学", "京子", "直樹", "陽子", "浩", "恵子", "明", "愛", "徹", "久美子", "進", "良子"];
+        const dummyStatuses = ["同意済み", "修正依頼中", "完了済み", "差し戻し", "通知済み", "未着手"];
 
-
-        function getRandomOfficeName() {
-            if (officeNamesFromCSV.length === 0) return "デフォルト事業所";
-            return officeNamesFromCSV[Math.floor(Math.random() * officeNamesFromCSV.length)];
-        }
-        function getRandomEmployeeName() {
-            const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-            const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-            return `${lastName} ${firstName}`;
-        }
-         function getRandomEmployeeId(index) {
-            return (300000 + index + Math.floor(Math.random() * 1000)).toString().padStart(6, '0');
-        }
+        function getRandomOfficeName() { return officeNamesFromCSV[Math.floor(Math.random() * officeNamesFromCSV.length)]; }
+        function getRandomEmployeeName() { return `${lastNames[Math.floor(Math.random() * lastNames.length)]} ${firstNames[Math.floor(Math.random() * firstNames.length)]}`; }
+        function getRandomEmployeeId(index) { return (300000 + index + Math.floor(Math.random() * 1000)).toString().padStart(6, '0'); }
         function getRandomDate(startYear = 2025, endYear = 2026) {
             const year = Math.floor(Math.random() * (endYear - startYear + 1)) + startYear;
             const month = Math.floor(Math.random() * 12) + 1;
             const day = Math.floor(Math.random() * 28) + 1; 
             return `${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
         }
-
-
-        function getRandomSupplerHourlyWage() {
-            const min = 1200;
-            const max = 2500;
-            const range = (max - min) / 10;
-            return (Math.floor(Math.random() * (range + 1)) * 10) + min;
+        function getRandomSupplerHourlyWage() { return (Math.floor(Math.random() * ((2500 - 1200) / 10 + 1)) * 10) + 1200; }
+        function getRandomAllowance(maxAmount = 5000, step = 1000) { 
+            if (Math.random() < 0.3) return 0; 
+            return (Math.floor(Math.random() * (maxAmount / step)) + 1) * step;
         }
-
+        function getRandomBonusMonths() { 
+            const months = [0, 0.5, 1.0, 1.5, 2.0];
+            if (Math.random() < 0.5) return "0.0ヶ月"; 
+            return months[Math.floor(Math.random() * months.length)].toFixed(1) + "ヶ月";
+        }
         function parseNumericValue(value) {
             if (value === null || typeof value === 'undefined' || String(value).trim() === '' || String(value).trim() === '-') {
                 return 0;
@@ -426,17 +474,35 @@
             const num = parseFloat(numStr);
             return isNaN(num) ? 0 : num;
         }
-
-        function calculateCurrentLaborCost(row) {
-            const hourlyWage = parseNumericValue(row.querySelector('[data-column-name="hourly_wage"]').textContent);
-            const contractHoursDay = parseNumericValue(row.querySelector('[data-column-name="contract_hours_day"]').textContent);
-            const contractDaysMonth = parseNumericValue(row.querySelector('[data-column-name="contract_days_month"]').textContent);
-            const managerAllowance = parseNumericValue(row.querySelector('[data-column-name="manager_allowance"]').textContent);
-            const otherAllowance1 = parseNumericValue(row.querySelector('[data-column-name="other_allowance1"]').textContent);
-            const otherAllowance2 = parseNumericValue(row.querySelector('[data-column-name="other_allowance2"]').textContent);
+        const formatCurrencyOrHyphen = (val) => {
+            const numVal = parseNumericValue(val);
+            if (String(val).trim() === '-' && numVal === 0) return '-'; 
+            return numVal.toLocaleString('ja-JP');
+        };
+         const formatMonthsOrHyphen = (val) => { 
+            const numVal = parseNumericValue(val);
+            if (String(val).trim() === '-' && numVal === 0 && !String(val).includes("ヶ月")) return '-';
+            if (String(val).trim().endsWith("ヶ月")) return val; 
+            return numVal.toFixed(1) + "ヶ月";
+        };
+        function calculateExpectedLaborCost(row) {
+            const hourlyWage = parseNumericValue(row.querySelector('[data-column-name="hourly_wage_current"]').textContent);
+            const contractHoursDay = parseNumericValue(row.querySelector('[data-column-name="contract_hours_day_current"]').textContent);
+            const contractDaysMonth = parseNumericValue(row.querySelector('[data-column-name="contract_days_month_current"]').textContent);
+            const managerAllowance = parseNumericValue(row.querySelector('[data-column-name="manager_allowance_current"]').textContent);
+            const otherAllowance1 = parseNumericValue(row.querySelector('[data-column-name="other_allowance1_current"]').textContent);
+            const otherAllowance2 = parseNumericValue(row.querySelector('[data-column-name="other_allowance2_current"]').textContent);
             return Math.round((hourlyWage * contractHoursDay * contractDaysMonth) + managerAllowance + otherAllowance1 + otherAllowance2);
         }
-
+        function calculateUpdatedLaborCost(row) {
+            const hourlyWage = parseNumericValue(row.querySelector('[data-column-name="hourly_wage_new"]').textContent);
+            const contractHoursDay = parseNumericValue(row.querySelector('[data-column-name="contract_hours_day_new"]').textContent);
+            const contractDaysMonth = parseNumericValue(row.querySelector('[data-column-name="contract_days_month_new"]').textContent);
+            const managerAllowance = parseNumericValue(row.querySelector('[data-column-name="manager_allowance_new"]').textContent);
+            const otherAllowance1 = parseNumericValue(row.querySelector('[data-column-name="other_allowance1_new"]').textContent);
+            const otherAllowance2 = parseNumericValue(row.querySelector('[data-column-name="other_allowance2_new"]').textContent);
+            return Math.round((hourlyWage * contractHoursDay * contractDaysMonth) + managerAllowance + otherAllowance1 + otherAllowance2);
+        }
         function updateLaborCostColumns(row) {
             const expectedCostCell = row.querySelector('[data-column-name="expected_labor_cost"]');
             const updatedCostCell = row.querySelector('[data-column-name="updated_labor_cost"]');
@@ -444,32 +510,39 @@
 
             if (!expectedCostCell || !updatedCostCell || !differenceCell) return;
 
-            const initialExpectedCost = Math.round(parseNumericValue(expectedCostCell.dataset.initialValue));
-            const currentCalculatedCost = calculateCurrentLaborCost(row); // Already returns rounded
+            const expectedCost = calculateExpectedLaborCost(row);
+            const updatedCost = calculateUpdatedLaborCost(row);
+            
+            expectedCostCell.textContent = expectedCost.toLocaleString('ja-JP');
+            updatedCostCell.textContent = updatedCost.toLocaleString('ja-JP');
 
-            updatedCostCell.textContent = currentCalculatedCost.toLocaleString('ja-JP');
-
-            let difference = currentCalculatedCost - initialExpectedCost;
-            if (Math.abs(difference) < 0.001) { // Threshold for treating as zero
-                difference = 0;
-            }
-            // Ensure difference is also an integer for display if needed, though toLocaleString might handle it.
-            // difference = Math.round(difference); 
-
+            let difference = updatedCost - expectedCost;
+            if (Math.abs(difference) < 0.001) { difference = 0; }
+            
             differenceCell.textContent = difference.toLocaleString('ja-JP');
-
             differenceCell.classList.remove('labor-cost-plus', 'labor-cost-minus');
-            if (difference > 0) {
-                differenceCell.classList.add('labor-cost-plus');
-            } else if (difference < 0) {
-                differenceCell.classList.add('labor-cost-minus');
-            }
+            if (difference > 0) differenceCell.classList.add('labor-cost-plus');
+            else if (difference < 0) differenceCell.classList.add('labor-cost-minus');
         }
-
-        function setStatusCell(cell, statusText, statusClass, isButton = false, remarksText = '') {
+        function setStatusCell(cell, statusText, remarksText = '') {
             cell.innerHTML = '';
             let element;
-            if (isButton) {
+            let statusClass = '';
+
+            switch (statusText) {
+                case "同意済み": statusClass = 'status-agreed'; break;
+                case "修正依頼中": statusClass = 'status-rejected'; break;
+                case "完了済み": statusClass = 'status-completed'; break;
+                case "差し戻し": statusClass = 'status-returned'; break;
+                case "通知済み": statusClass = 'status-notified'; break; 
+                case "未着手": statusClass = 'status-default'; break;
+                case "管理中": statusClass = 'status-managing'; break;
+                case "確認中": statusClass = 'status-pending'; break;
+                case "メンバー対応中": statusClass = 'status-member-support'; break;
+                default: statusClass = 'status-default'; break;
+            }
+
+            if (statusText === "差し戻し") {
                 element = document.createElement('button');
                 element.classList.add('status-label', statusClass);
                 element.textContent = statusText;
@@ -488,15 +561,28 @@
             }
             cell.appendChild(element);
         }
+        
+        function adjustStickyHeaderTops() {
+            const headerRows = document.querySelectorAll('.dashboard-table thead tr');
+            if (headerRows.length < 2) return;
 
+            const firstActualRowHeight = headerRows[0].getBoundingClientRect().height;
+            
+            const secondRowThs = headerRows[1].querySelectorAll('th');
+            secondRowThs.forEach(th => {
+                th.style.top = firstActualRowHeight + 'px';
+            });
+        }
 
+        // --- Main DOMContentLoaded ---
         document.addEventListener('DOMContentLoaded', function() {
             const tableBody = document.getElementById('dashboardTableBody');
             const modal = document.getElementById('rejectionModal');
             const closeButton = modal.querySelector('.close-button');
+            const notifySelectedBtn = document.getElementById('notifySelectedBtn');
+
 
             if (tableBody.children.length === 0) {
-                const baseStatusTypes = ["管理中", "未着手", "確認中", "メンバー対応中", "修正依頼中", "完了済み", "差し戻し"];
                 const agreementTypes = ["済", "未"];
                 const booleanTypes = ["加入", "未加入", "-"];
                 const delayTypes = ["なし", "あり"];
@@ -504,103 +590,158 @@
                 for (let i = 1; i <= 50; i++) {
                     const row = document.createElement('tr');
                     row.dataset.recordId = i.toString();
-
+                    
+                    const currentStatus = dummyStatuses[(i - 1) % dummyStatuses.length];
                     const agreement = agreementTypes[Math.floor(Math.random() * agreementTypes.length)];
-                    let initialStatus = baseStatusTypes[Math.floor(Math.random() * baseStatusTypes.length)];
-                    if (agreement === "済") {
-                        initialStatus = "管理中"; 
-                    }
 
+                    const sampleData = {
+                        status: currentStatus,
+                        send_date: getRandomDate(),
+                        open_date: Math.random() > 0.3 ? getRandomDate() : '-',
+                        agreement: agreement,
+                        agreement_date: (currentStatus === "同意済み" || agreement === '済') ? getRandomDate() : '-',
+                        office_name: getRandomOfficeName(),
+                        employee_id: getRandomEmployeeId(i),
+                        employee_name: getRandomEmployeeName(),
+                        employment_type: "サプラー",
+                        contract_start_date: getRandomDate(),
+                        contract_end_date: Math.random() > 0.5 ? getRandomDate(2026, 2027) : '-',
+                        hourly_wage: getRandomSupplerHourlyWage(),
+                        manager_allowance: getRandomAllowance(50000, 10000),
+                        annual_bonus_months: getRandomBonusMonths(),
+                        contract_hours_day: (Math.random() * 4 + 4).toFixed(1),
+                        contract_days_month: Math.floor(Math.random() * 10) + 15,
+                        avg_work_hours_day: (Math.random() * 2 + 6).toFixed(1), 
+                        avg_work_days: (Math.random() * 5 + 15).toFixed(1),   
+                        shift1: "9:00-18:00",
+                        shift1_break: "60",
+                        shift2: "-",
+                        shift2_break: "-",
+                        additional_wage2: getRandomAllowance(3000, 500), 
+                        additional_wage3: getRandomAllowance(3000, 500), 
+                        additional_wage4: getRandomAllowance(3000, 500), 
+                        other_allowance1: getRandomAllowance(10000, 1000),
+                        other_allowance2: getRandomAllowance(5000, 1000),
+                        social_insurance: booleanTypes[Math.floor(Math.random()*booleanTypes.length)],
+                        employment_insurance: booleanTypes[Math.floor(Math.random()*booleanTypes.length)],
+                        reminder_date: Math.random() > 0.2 ? getRandomDate() : '-',
+                        due_date: getRandomDate(),
+                        delay_flag_text: delayTypes[Math.floor(Math.random()*delayTypes.length)],
+                        remarks: `備考サンプル ${i}`
+                    };
+                    
                     row.innerHTML = `
                         <td><input type="checkbox" class="row-checkbox"></td>
-                        <td data-column-name="status" data-initial-value="${initialStatus}"></td>
-                        <td data-column-name="send_date" data-initial-value="${getRandomDate()}">${getRandomDate()}</td>
-                        <td data-column-name="open_date" data-initial-value="${Math.random() > 0.3 ? getRandomDate() : '-'}">${Math.random() > 0.3 ? getRandomDate() : '-'}</td>
-                        <td data-column-name="agreement" data-initial-value="${agreement}">${agreement}</td>
-                        <td data-column-name="agreement_date" data-initial-value="${agreement === '済' ? getRandomDate() : '-'}">${agreement === '済' ? getRandomDate() : '-'}</td>
-                        <td data-column-name="office_name" data-initial-value="${getRandomOfficeName()}">${getRandomOfficeName()}</td>
-                        <td data-column-name="employee_id" data-initial-value="${getRandomEmployeeId(i)}">${getRandomEmployeeId(i)}</td>
-                        <td data-column-name="employee_name" data-initial-value="${getRandomEmployeeName()}">${getRandomEmployeeName()}</td>
-                        <td data-column-name="employment_type" data-initial-value="サプラー">サプラー</td>
-                        <td data-column-name="contract_start_date" data-initial-value="${getRandomDate()}">${getRandomDate()}</td>
-                        <td data-column-name="contract_end_date" data-initial-value="${Math.random() > 0.5 ? getRandomDate(2026, 2027) : '-'}" contenteditable="true">${Math.random() > 0.5 ? getRandomDate(2026, 2027) : '-'}</td>
-                        <td data-column-name="hourly_wage" data-initial-value="${getRandomSupplerHourlyWage()}" contenteditable="true">${getRandomSupplerHourlyWage().toLocaleString()}</td>
-                        <td data-column-name="manager_allowance" data-initial-value="${Math.random() > 0.7 ? (Math.floor(Math.random()*5)+1)*10000 : '-'}" contenteditable="true">${Math.random() > 0.7 ? ((Math.floor(Math.random()*5)+1)*10000).toLocaleString() : '-'}</td>
-                        <td data-column-name="annual_bonus_months" data-initial-value="0.0ヶ月">0.0ヶ月</td>
-                        <td data-column-name="contract_hours_day" data-initial-value="${(Math.random() * 4 + 4).toFixed(1)}" contenteditable="true">${(Math.random() * 4 + 4).toFixed(1)}</td>
-                        <td data-column-name="contract_days_month" data-initial-value="${Math.floor(Math.random() * 10) + 15}" contenteditable="true">${Math.floor(Math.random() * 10) + 15}</td>
-                        <td data-column-name="shift1" data-initial-value="9:00-18:00" contenteditable="true">9:00-18:00</td>
-                        <td data-column-name="shift1_break" data-initial-value="60" contenteditable="true">60</td>
-                        <td data-column-name="shift2" data-initial-value="-" contenteditable="true">-</td>
-                        <td data-column-name="shift2_break" data-initial-value="-" contenteditable="true">-</td>
-                        <td data-column-name="additional_wage2" data-initial-value="-">-</td>
-                        <td data-column-name="additional_wage3" data-initial-value="-">-</td>
-                        <td data-column-name="additional_wage4" data-initial-value="-">-</td>
-                        <td data-column-name="other_allowance1" data-initial-value="${Math.random() > 0.5 ? (Math.floor(Math.random()*10))*1000 : '-'}" contenteditable="true">${Math.random() > 0.5 ? ((Math.floor(Math.random()*10))*1000).toLocaleString() : '-'}</td>
-                        <td data-column-name="other_allowance2" data-initial-value="${Math.random() > 0.8 ? (Math.floor(Math.random()*5))*1000 : '-'}" contenteditable="true">${Math.random() > 0.8 ? ((Math.floor(Math.random()*5))*1000).toLocaleString() : '-'}</td>
-                        <td data-column-name="expected_labor_cost" class="highlight-labor-cost"></td>
-                        <td data-column-name="updated_labor_cost" class="highlight-labor-cost"></td>
-                        <td data-column-name="labor_cost_difference" class="highlight-labor-cost"></td>
-                        <td data-column-name="social_insurance" data-initial-value="${booleanTypes[Math.floor(Math.random()*booleanTypes.length)]}">${booleanTypes[Math.floor(Math.random()*booleanTypes.length)]}</td>
-                        <td data-column-name="employment_insurance" data-initial-value="${booleanTypes[Math.floor(Math.random()*booleanTypes.length)]}">${booleanTypes[Math.floor(Math.random()*booleanTypes.length)]}</td>
-                        <td data-column-name="reminder_date" data-initial-value="${Math.random() > 0.2 ? getRandomDate() : '-'}">${Math.random() > 0.2 ? getRandomDate() : '-'}</td>
-                        <td data-column-name="due_date" data-initial-value="${getRandomDate()}">${getRandomDate()}</td>
-                        <td data-column-name="delay_flag" data-initial-value="${delayTypes[Math.floor(Math.random()*delayTypes.length)]}"><span class="delay-flag-${delayTypes[Math.floor(Math.random()*delayTypes.length)] === 'あり' ? 'true' : 'false'}">${delayTypes[Math.floor(Math.random()*delayTypes.length)]}</span></td>
-                        <td data-column-name="remarks" data-initial-value="備考サンプル ${i}" contenteditable="true">備考サンプル ${i}</td>
+                        <td data-column-name="status" data-initial-value="${sampleData.status}"></td>
+                        <td data-column-name="office_name" data-initial-value="${sampleData.office_name}">${sampleData.office_name}</td>
+                        <td data-column-name="employee_id" data-initial-value="${sampleData.employee_id}">${sampleData.employee_id}</td>
+                        <td data-column-name="employee_name" data-initial-value="${sampleData.employee_name}">${sampleData.employee_name}</td>
+                        <td data-column-name="send_date" data-initial-value="${sampleData.send_date}">${sampleData.send_date}</td>
+                        <td data-column-name="open_date" data-initial-value="${sampleData.open_date}">${sampleData.open_date}</td>
+                        <td data-column-name="agreement" data-initial-value="${sampleData.agreement}">${sampleData.agreement}</td>
+                        <td data-column-name="agreement_date" data-initial-value="${sampleData.agreement_date}">${sampleData.agreement_date}</td>
+                        <td data-column-name="employment_type" data-initial-value="${sampleData.employment_type}">${sampleData.employment_type}</td>
+                        <td data-column-name="contract_start_date" data-initial-value="${sampleData.contract_start_date}">${sampleData.contract_start_date}</td>
+                        
+                        <td class="current-value-cell" data-column-name="contract_end_date_current" data-initial-value="${sampleData.contract_end_date}">${sampleData.contract_end_date}</td>
+                        <td data-column-name="contract_end_date_new" data-initial-value="${sampleData.contract_end_date}" contenteditable="true">${sampleData.contract_end_date}</td>
+                        <td class="current-value-cell" data-column-name="hourly_wage_current" data-initial-value="${sampleData.hourly_wage}">${formatCurrencyOrHyphen(sampleData.hourly_wage)}</td>
+                        <td data-column-name="hourly_wage_new" data-initial-value="${sampleData.hourly_wage}" contenteditable="true">${formatCurrencyOrHyphen(sampleData.hourly_wage)}</td>
+                        <td class="current-value-cell" data-column-name="manager_allowance_current" data-initial-value="${sampleData.manager_allowance}">${formatCurrencyOrHyphen(sampleData.manager_allowance)}</td>
+                        <td data-column-name="manager_allowance_new" data-initial-value="${sampleData.manager_allowance}" contenteditable="true">${formatCurrencyOrHyphen(sampleData.manager_allowance)}</td>
+                        
+                        <td class="current-value-cell" data-column-name="annual_bonus_months_current" data-initial-value="${sampleData.annual_bonus_months}">${formatMonthsOrHyphen(sampleData.annual_bonus_months)}</td>
+                        <td data-column-name="annual_bonus_months_new" data-initial-value="${sampleData.annual_bonus_months}" contenteditable="true">${formatMonthsOrHyphen(sampleData.annual_bonus_months)}</td>
+                        
+                        <td class="current-value-cell" data-column-name="contract_hours_day_current" data-initial-value="${sampleData.contract_hours_day}">${sampleData.contract_hours_day}</td>
+                        <td data-column-name="contract_hours_day_new" data-initial-value="${sampleData.contract_hours_day}" contenteditable="true">${sampleData.contract_hours_day}</td>
+                        <td class="current-value-cell" data-column-name="contract_days_month_current" data-initial-value="${sampleData.contract_days_month}">${sampleData.contract_days_month}</td>
+                        <td data-column-name="contract_days_month_new" data-initial-value="${sampleData.contract_days_month}" contenteditable="true">${sampleData.contract_days_month}</td>
+                        
+                        <td class="current-value-cell highlight-average-ref" data-column-name="avg_work_hours_day_ref">${sampleData.avg_work_hours_day}</td>
+                        <td class="current-value-cell highlight-average-ref" data-column-name="avg_work_days_ref">${sampleData.avg_work_days}</td>
+                        
+                        <td class="current-value-cell" data-column-name="shift1_current" data-initial-value="${sampleData.shift1}">${sampleData.shift1}</td>
+                        <td data-column-name="shift1_new" data-initial-value="${sampleData.shift1}" contenteditable="true">${sampleData.shift1}</td>
+                        <td class="current-value-cell" data-column-name="shift1_break_current" data-initial-value="${sampleData.shift1_break}">${sampleData.shift1_break}</td>
+                        <td data-column-name="shift1_break_new" data-initial-value="${sampleData.shift1_break}" contenteditable="true">${sampleData.shift1_break}</td>
+                        <td class="current-value-cell" data-column-name="shift2_current" data-initial-value="${sampleData.shift2}">${sampleData.shift2}</td>
+                        <td data-column-name="shift2_new" data-initial-value="${sampleData.shift2}" contenteditable="true">${sampleData.shift2}</td>
+                        <td class="current-value-cell" data-column-name="shift2_break_current" data-initial-value="${sampleData.shift2_break}">${sampleData.shift2_break}</td>
+                        <td data-column-name="shift2_break_new" data-initial-value="${sampleData.shift2_break}" contenteditable="true">${sampleData.shift2_break}</td>
+                        
+                        <td class="current-value-cell" data-column-name="additional_wage2_current" data-initial-value="${sampleData.additional_wage2}">${formatCurrencyOrHyphen(sampleData.additional_wage2)}</td>
+                        <td data-column-name="additional_wage2_new" data-initial-value="${sampleData.additional_wage2}" contenteditable="true">${formatCurrencyOrHyphen(sampleData.additional_wage2)}</td>
+                        <td class="current-value-cell" data-column-name="additional_wage3_current" data-initial-value="${sampleData.additional_wage3}">${formatCurrencyOrHyphen(sampleData.additional_wage3)}</td>
+                        <td data-column-name="additional_wage3_new" data-initial-value="${sampleData.additional_wage3}" contenteditable="true">${formatCurrencyOrHyphen(sampleData.additional_wage3)}</td>
+                        <td class="current-value-cell" data-column-name="additional_wage4_current" data-initial-value="${sampleData.additional_wage4}">${formatCurrencyOrHyphen(sampleData.additional_wage4)}</td>
+                        <td data-column-name="additional_wage4_new" data-initial-value="${sampleData.additional_wage4}" contenteditable="true">${formatCurrencyOrHyphen(sampleData.additional_wage4)}</td>
+
+                        <td class="current-value-cell" data-column-name="other_allowance1_current" data-initial-value="${sampleData.other_allowance1}">${formatCurrencyOrHyphen(sampleData.other_allowance1)}</td>
+                        <td data-column-name="other_allowance1_new" data-initial-value="${sampleData.other_allowance1}" contenteditable="true">${formatCurrencyOrHyphen(sampleData.other_allowance1)}</td>
+                        <td class="current-value-cell" data-column-name="other_allowance2_current" data-initial-value="${sampleData.other_allowance2}">${formatCurrencyOrHyphen(sampleData.other_allowance2)}</td>
+                        <td data-column-name="other_allowance2_new" data-initial-value="${sampleData.other_allowance2}" contenteditable="true">${formatCurrencyOrHyphen(sampleData.other_allowance2)}</td>
+                        
+                        <td data-column-name="expected_labor_cost" class="calculated-readonly-cell highlight-labor-cost"></td>
+                        <td data-column-name="updated_labor_cost" class="calculated-readonly-cell highlight-labor-cost"></td>
+                        <td data-column-name="labor_cost_difference" class="calculated-readonly-cell highlight-labor-cost"></td>
+                        
+                        <td data-column-name="social_insurance" data-initial-value="${sampleData.social_insurance}">${sampleData.social_insurance}</td>
+                        <td data-column-name="employment_insurance" data-initial-value="${sampleData.employment_insurance}">${sampleData.employment_insurance}</td>
+                        <td data-column-name="reminder_date" data-initial-value="${sampleData.reminder_date}">${sampleData.reminder_date}</td>
+                        <td data-column-name="due_date" data-initial-value="${sampleData.due_date}">${sampleData.due_date}</td>
+                        <td data-column-name="delay_flag" data-initial-value="${sampleData.delay_flag_text}"><span class="delay-flag-${sampleData.delay_flag_text === 'あり' ? 'true' : 'false'}">${sampleData.delay_flag_text}</span></td>
+                        <td data-column-name="remarks" data-initial-value="${sampleData.remarks}" contenteditable="true">${sampleData.remarks}</td>
                     `;
                     tableBody.appendChild(row);
                 }
             }
+            adjustStickyHeaderTops(); 
 
             const rows = tableBody.querySelectorAll('tr');
             rows.forEach(row => {
-                const expectedCostCell = row.querySelector('[data-column-name="expected_labor_cost"]');
-                if (expectedCostCell) {
-                    const initialCost = calculateCurrentLaborCost(row); // Returns rounded
-                    expectedCostCell.textContent = initialCost.toLocaleString('ja-JP');
-                    expectedCostCell.dataset.initialValue = initialCost.toString(); // Store as string
-                }
-                updateLaborCostColumns(row); // This should make difference 0 initially
-
-                const statusCell = row.querySelector('[data-column-name="status"]');
-                const agreementCell = row.querySelector('[data-column-name="agreement"]');
-                const remarksCell = row.querySelector('[data-column-name="remarks"]');
-                let agreementStatus = agreementCell.textContent.trim();
-                let initialStatus = statusCell.dataset.initialValue.trim();
-                let remarksText = remarksCell ? remarksCell.textContent.trim() : '';
-
-                row.classList.remove('row-highlight-agreed', 'row-locked');
-                const editableCellsInRow = row.querySelectorAll('td[contenteditable="true"], td[contenteditable="false"].editable-was-true');
-                editableCellsInRow.forEach(cell => {
-                    if (cell.classList.contains('editable-was-true')) {
-                         cell.setAttribute('contenteditable', 'true');
-                         cell.classList.remove('editable-was-true');
-                         cell.style.cursor = '';
-                         cell.style.backgroundColor = '';
+                const editableCells = row.querySelectorAll('td[contenteditable="true"]');
+                editableCells.forEach(cell => {
+                    const initialVal = cell.dataset.initialValue;
+                    const columnName = cell.dataset.columnName;
+                    if (columnName && (columnName.includes('hourly_wage_new') || columnName.includes('allowance_new') || (columnName.startsWith('additional_wage') && columnName.endsWith('_new')))) {
+                         cell.textContent = formatCurrencyOrHyphen(initialVal);
+                    } else if (columnName === 'annual_bonus_months_new') {
+                         cell.textContent = formatMonthsOrHyphen(initialVal);
+                    }
+                    else if (columnName && (columnName.includes('contract_hours_day_new') || columnName.includes('contract_days_month_new'))) {
+                         cell.textContent = (initialVal === '-' || initialVal === '0' && parseNumericValue(initialVal) === 0) ? initialVal : parseNumericValue(initialVal).toString();
+                    }
+                    else {
+                         cell.textContent = initialVal;
                     }
                 });
+                
+                updateLaborCostColumns(row); 
 
-                if (agreementStatus === '済') {
+                const statusCell = row.querySelector('[data-column-name="status"]');
+                const currentStatus = statusCell.dataset.initialValue.trim();
+                const remarksText = row.querySelector('[data-column-name="remarks"]').textContent.trim(); 
+
+                setStatusCell(statusCell, currentStatus, remarksText);
+
+                row.classList.remove('row-highlight-agreed', 'row-locked');
+                const allEditableCandidateCells = row.querySelectorAll('td[data-column-name$="_new"], td[data-column-name="remarks"]');
+
+                if (currentStatus === '同意済み') {
                     row.classList.add('row-highlight-agreed', 'row-locked');
-                    setStatusCell(statusCell, '同意済み', 'status-agreed');
-                    const cellsToLock = row.querySelectorAll('td[contenteditable="true"]');
-                    cellsToLock.forEach(cell => {
+                    allEditableCandidateCells.forEach(cell => {
                         cell.setAttribute('contenteditable', 'false');
                         cell.classList.add('editable-was-true');
                     });
                 } else {
-                    if (initialStatus === '管理中') setStatusCell(statusCell, '管理中', 'status-managing');
-                    else if (initialStatus === '未着手') setStatusCell(statusCell, '未着手', 'status-default');
-                    else if (initialStatus === '確認中') setStatusCell(statusCell, '確認中', 'status-pending');
-                    else if (initialStatus === 'メンバー対応中') setStatusCell(statusCell, 'メンバー対応中', 'status-member-support');
-                    else if (initialStatus === '修正依頼中') setStatusCell(statusCell, '修正依頼中', 'status-rejected');
-                    else if (initialStatus === '完了済み') setStatusCell(statusCell, '完了済み', 'status-completed');
-                    else if (initialStatus === '差し戻し') {
-                        setStatusCell(statusCell, '差し戻し', 'status-returned', true, remarksText);
-                    }
-                    else {
-                         setStatusCell(statusCell, initialStatus || '未定義', 'status-default');
-                    }
+                    allEditableCandidateCells.forEach(cell => {
+                        if (cell.dataset.columnName === "remarks" || (cell.dataset.columnName && cell.dataset.columnName.endsWith("_new"))) {
+                            cell.setAttribute('contenteditable', 'true');
+                            cell.classList.remove('editable-was-true');
+                            cell.style.backgroundColor = '#f0f8ff'; 
+                        }
+                    });
                 }
             });
 
@@ -608,7 +749,26 @@
                 const cell = event.target;
                 if (cell.tagName === 'TD' && cell.getAttribute('contenteditable') === 'true') {
                     const initialValue = cell.dataset.initialValue || '';
-                    const currentValue = cell.textContent.trim();
+                    let currentValue = cell.textContent.trim();
+                    const columnName = cell.dataset.columnName;
+
+                    if (columnName && (columnName.includes('hourly_wage_new') || columnName.includes('allowance_new') || (columnName.startsWith('additional_wage') && columnName.endsWith('_new')) )) {
+                        const numericVal = parseNumericValue(currentValue);
+                        currentValue = formatCurrencyOrHyphen(numericVal);
+                        cell.textContent = currentValue; 
+                    } else if (columnName === 'annual_bonus_months_new') {
+                        const numericVal = parseNumericValue(currentValue);
+                        currentValue = formatMonthsOrHyphen(numericVal);
+                        cell.textContent = currentValue;
+                    }
+                    else if (columnName && (columnName.includes('contract_hours_day_new') || columnName.includes('contract_days_month_new'))) {
+                        const numericVal = parseNumericValue(currentValue);
+                        currentValue = (numericVal === 0 && (initialValue === '-' || String(initialValue).trim() === '0')) ? (String(currentValue).trim() === '' ? initialValue : currentValue) : numericVal.toString();
+                        if(String(cell.textContent).trim() === '' && initialValue === '-') currentValue = '-'; 
+                        else if(String(cell.textContent).trim() === '') currentValue = '0'; 
+                        cell.textContent = currentValue;
+                    }
+
 
                     if (initialValue !== currentValue) {
                         cell.classList.add('highlight-changed');
@@ -617,8 +777,11 @@
                     }
                     updateChangedRecordCount();
 
-                    const costRelatedColumns = ['hourly_wage', 'contract_hours_day', 'contract_days_month', 'manager_allowance', 'other_allowance1', 'other_allowance2'];
-                    if (costRelatedColumns.includes(cell.dataset.columnName)) {
+                    const costRelatedNewColumns = [
+                        'hourly_wage_new', 'contract_hours_day_new', 'contract_days_month_new', 
+                        'manager_allowance_new', 'other_allowance1_new', 'other_allowance2_new'
+                    ];
+                    if (costRelatedNewColumns.includes(cell.dataset.columnName)) {
                         updateLaborCostColumns(cell.closest('tr'));
                     }
                 }
@@ -630,6 +793,7 @@
             if (modal) {
                 window.onclick = function(event) { if (event.target == modal) modal.style.display = "none"; }
             }
+            window.addEventListener('resize', adjustStickyHeaderTops); 
 
             function updateChangedRecordCount() {
                 if (!tableBody) return;
@@ -650,9 +814,20 @@
                     selectedCheckboxes.forEach(checkbox => {
                         const row = checkbox.closest('tr');
                         if (row && !row.classList.contains('row-locked')) {
-                            const editableCells = row.querySelectorAll('td[contenteditable="true"]');
+                            const editableCells = row.querySelectorAll('td[contenteditable="true"]'); 
                             editableCells.forEach(cell => {
-                                cell.textContent = cell.dataset.initialValue || '';
+                                const initialVal = cell.dataset.initialValue || '';
+                                const columnName = cell.dataset.columnName;
+                                if (columnName && (columnName.includes('hourly_wage_new') || columnName.includes('allowance_new') || (columnName.startsWith('additional_wage') && columnName.endsWith('_new')))) {
+                                     cell.textContent = formatCurrencyOrHyphen(initialVal);
+                                } else if (columnName === 'annual_bonus_months_new') {
+                                     cell.textContent = formatMonthsOrHyphen(initialVal);
+                                }
+                                else if (columnName && (columnName.includes('contract_hours_day_new') || columnName.includes('contract_days_month_new'))){
+                                     cell.textContent = (initialVal === '-' || initialVal === '0' && parseNumericValue(initialVal) === 0) ? initialVal : parseNumericValue(initialVal).toString();
+                                } else {
+                                     cell.textContent = initialVal;
+                                }
                                 cell.classList.remove('highlight-changed');
                             });
                             updateLaborCostColumns(row);
@@ -674,6 +849,38 @@
                              checkbox.checked = false;
                         }
                     });
+                });
+            }
+
+            if (notifySelectedBtn) {
+                notifySelectedBtn.addEventListener('click', function() {
+                    const selectedCheckboxes = tableBody.querySelectorAll('tr input.row-checkbox:checked');
+                    const selectedEmployeeNames = [];
+                    selectedCheckboxes.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        if (row) {
+                            const employeeNameCell = row.querySelector('td[data-column-name="employee_name"]');
+                            if (employeeNameCell) {
+                                selectedEmployeeNames.push(employeeNameCell.textContent.trim());
+                            }
+                        }
+                    });
+                    const confirmationMessageArea = document.querySelector('.confirmation-area p');
+                    const originalText = confirmationMessageArea ? confirmationMessageArea.textContent : "";
+
+                    if (selectedEmployeeNames.length > 0) {
+                        console.log(`以下の従業員に通知を送信します（仮）: ${selectedEmployeeNames.join(', ')}`);
+                        if(confirmationMessageArea){
+                            confirmationMessageArea.textContent = `${selectedEmployeeNames.join(', ')} さんに通知を送信しました。（仮）`;
+                            setTimeout(() => { confirmationMessageArea.textContent = originalText; }, 5000);
+                        }
+                    } else {
+                        console.log("通知を送信する従業員が選択されていません。");
+                         if(confirmationMessageArea){
+                            confirmationMessageArea.textContent = `通知対象が選択されていません。`;
+                            setTimeout(() => { confirmationMessageArea.textContent = originalText; }, 3000);
+                        }
+                    }
                 });
             }
             updateChangedRecordCount();
